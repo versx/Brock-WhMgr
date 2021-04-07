@@ -31,6 +31,23 @@
         }
 
         [
+            Command("joined"),
+            Description(""),
+        ]
+        public async Task JoinDateAsync(CommandContext ctx) // TODO: Add support for individual or multiple members
+        {
+            var members = await ctx.Guild.GetAllMembersAsync();
+            var sorted = members.ToList();
+            sorted.Sort((x, y) => x.JoinedAt.CompareTo(y.JoinedAt));
+            foreach (var member in sorted)
+            {
+                await ctx.RespondEmbed($"{member.Username} ({member.Id}) joined {member.JoinedAt}");
+                System.Threading.Thread.Sleep(100);
+            }
+            await ctx.RespondEmbed($"All members join dates checked");
+        }
+
+        [
             Command("isbanned"),
             Description("Check if IP banned from NianticLabs or Pokemon Trainer Club."),
             Hidden
