@@ -8,6 +8,7 @@
     using DSharpPlus.CommandsNext.Attributes;
     using DSharpPlus.Entities;
 
+    using WhMgr.Configuration;
     using WhMgr.Data.Subscriptions;
     using WhMgr.Diagnostics;
     using WhMgr.Extensions;
@@ -17,17 +18,19 @@
     [
         RequireOwner
     ]
-    public class Owner
+    public class Owner : BaseCommandModule
     {
         const string PokemonTrainerClub = "https://sso.pokemon.com/sso/login";
         const string NianticLabs = "https://pgorelease.nianticlabs.com/plfe/version";
 
         private static readonly IEventLogger _logger = EventLogger.GetLogger("OWNER", Program.LogLevel);
-        private readonly Dependencies _dep;
+        private readonly WhConfigHolder _config;
+        private readonly SubscriptionProcessor _subProcessor;
 
-        public Owner(Dependencies dep)
+        public Owner(WhConfigHolder config, SubscriptionProcessor subProcessor)
         {
-            _dep = dep;
+            _config = config;
+            _subProcessor = subProcessor;
         }
 
         [
@@ -63,15 +66,15 @@
         {
             _logger.Debug($"Checking if there are any subscriptions for members that are no longer apart of the server...");
 
-            var guildId = ctx.Guild?.Id ?? ctx.Client.Guilds.Keys.FirstOrDefault(x => _dep.WhConfig.Servers.ContainsKey(x));
+            var guildId = ctx.Guild?.Id ?? ctx.Client.Guilds.Keys.FirstOrDefault(x => _config.Instance.Servers.ContainsKey(x));
 
             var removed = 0;
-            var users = _dep.SubscriptionProcessor?.Manager?.Subscriptions;
+            var users = _subProcessor?.Manager?.Subscriptions;
             for (var i = 0; i < users.Count; i++)
             {
                 var user = users[i];
                 var discordUser = ctx.Client.GetMemberById(guildId, user.UserId);
-                var isSupporter = ctx.Client.HasSupporterRole(guildId, user.UserId, _dep.WhConfig.Servers[guildId].DonorRoleIds);
+                var isSupporter = ctx.Client.HasSupporterRole(guildId, user.UserId, _config.Instance.Servers[guildId].DonorRoleIds);
                 if (discordUser == null || !isSupporter)
                 {
                     _logger.Debug($"Removing user {user.UserId} subscription settings because they are no longer a member of the server.");
@@ -89,6 +92,7 @@
             await ctx.RespondEmbed(Translator.Instance.Translate("REMOVED_TOTAL_DEPARTED_MEMBERS").FormatText(removed.ToString("N0"), users.Count.ToString("N0")));
         }
 
+        /*
         [
             Command("sudo"), 
             Description("Executes a command as another user."),
@@ -104,6 +108,7 @@
             var cmds = ctx.CommandsNext;
             await cmds.SudoAsync(member, ctx.Channel, command);
         }
+        */
 
         [
             Command("uptime"),

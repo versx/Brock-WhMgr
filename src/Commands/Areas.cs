@@ -1,58 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-
-using DSharpPlus.CommandsNext;
-using DSharpPlus.CommandsNext.Attributes;
-using DSharpPlus.Entities;
-using DSharpPlus.Interactivity;
-
-using WhMgr.Diagnostics;
-using WhMgr.Extensions;
-using WhMgr.Localization;
-using WhMgr.Net.Webhooks;
-
-namespace WhMgr.Commands
+﻿namespace WhMgr.Commands
 {
-    public class Areas
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    using DSharpPlus.CommandsNext;
+    using DSharpPlus.CommandsNext.Attributes;
+    using DSharpPlus.Entities;
+    using DSharpPlus.Interactivity;
+    using DSharpPlus.Interactivity.Extensions;
+
+    using WhMgr.Configuration;
+    using WhMgr.Diagnostics;
+    using WhMgr.Extensions;
+    using WhMgr.Net.Webhooks;
+
+    public class Areas : BaseCommandModule
     {
         private static readonly IEventLogger _logger = EventLogger.GetLogger("AREAS", Program.LogLevel);
 
-        private readonly Dependencies _dep;
+        private readonly WhConfigHolder _config;
+        private readonly WebhookController _whm;
 
-        public Areas(Dependencies dep)
+        public Areas(WhConfigHolder config, WebhookController whm)
         {
-            _dep = dep;
-
+            _config = config;
+            _whm = whm;
         }
 
         [
             Command("areas"),
-            //Aliases("", ""),
             Description("Shows a list of areas")
         ]
         public async Task SendPaginated(CommandContext ctx)
         {
-            if (!await ctx.IsDirectMessageSupported(_dep.WhConfig))
+            if (!await ctx.IsDirectMessageSupported(_config.Instance))
                 return;
 
-            var guildId = ctx.Guild?.Id ?? ctx.Client.Guilds.Keys.FirstOrDefault(x => _dep.WhConfig.Servers.ContainsKey(x));
-            if (!_dep.WhConfig.Servers.ContainsKey(guildId))
+            var guildId = ctx.Guild?.Id ?? ctx.Client.Guilds.Keys.FirstOrDefault(x => _config.Instance.Servers.ContainsKey(x));
+            if (!_config.Instance.Servers.ContainsKey(guildId))
                 return;
 
-            var server = _dep.WhConfig.Servers[guildId];
+            var server = _config.Instance.Servers[guildId];
+            var geofences = _whm.GetServerGeofences(guildId);
+            var areas = geofences.Select(geofence => geofence.Name).OrderBy(Name => Name).ToList();
 
-            var geofences = _dep.Whm.GetServerGeofences(guildId);
-
-            List<string> areas = geofences.Select(geofence => geofence.Name).OrderBy(Name => Name).ToList();
-
-
-            var interactivity = ctx.Client.GetInteractivityModule();
-            List<Page> pages = new List<Page>();
+            var interactivity = ctx.Client.GetInteractivity();
+            var pages = new List<Page>();
             int pagelength = 0;
             var psb = new StringBuilder();
             int linesThisPage = 0;
@@ -96,11 +92,7 @@ namespace WhMgr.Commands
                 };
                 pages.Add(new Page { Embed = eb });
             }
-
-            await interactivity.SendPaginatedMessage(ctx.Channel, ctx.User, pages, timeoutoverride: TimeSpan.FromMinutes(5));
+            await interactivity.SendPaginatedMessageAsync(ctx.Channel, ctx.User, pages, timeoutoverride: TimeSpan.FromMinutes(5));
         }
-
     }
-
-
 }

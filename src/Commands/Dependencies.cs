@@ -1,4 +1,5 @@
-﻿namespace WhMgr.Commands
+﻿/*
+namespace WhMgr.Commands
 {
     using DSharpPlus.Interactivity;
 
@@ -12,7 +13,7 @@
     {
         private readonly WhConfigHolder _configHolder;
         
-        public InteractivityModule Interactivity;
+        public InteractivityExtension Interactivity;
 
         public WebhookController Whm { get; }
 
@@ -24,7 +25,7 @@
 
         public OsmManager OsmManager { get; }
 
-        public Dependencies(InteractivityModule interactivity, WebhookController whm, SubscriptionProcessor subProcessor, WhConfigHolder whConfig, StripeService stripe)
+        public Dependencies(InteractivityExtension interactivity, WebhookController whm, SubscriptionProcessor subProcessor, WhConfigHolder whConfig, StripeService stripe)
         {
             Interactivity = interactivity;
             Whm = whm;
@@ -35,3 +36,4 @@
         }
     }
 }
+*/

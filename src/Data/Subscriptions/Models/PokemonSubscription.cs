@@ -23,17 +23,31 @@
         public int SubscriptionId { get; set; }
 
         [
+            JsonIgnore,
+            Ignore,
+        ]
+        public List<uint> PokemonId => PokemonIdString?.Split(',')?
+                                                      .Select(x => uint.Parse(x))
+                                                      .ToList();
+
+        [
             JsonProperty("pokemon_id"),
             Alias("pokemon_id"),
-            Required
+            Required,
         ]
-        public int PokemonId { get; set; }
+        public string PokemonIdString { get; set; }
+
+        [
+            JsonIgnore,
+            Ignore,
+        ]
+        public List<string> Forms => FormsString?.Split(',').ToList();
 
         [
             JsonProperty("form"),
             Alias("form"),
         ]
-        public string Form { get; set; }
+        public string FormsString { get; set; }
 
         [
             JsonProperty("min_cp"),
@@ -114,7 +128,7 @@
             MaximumLevel = 35;
             Gender = "*";
             _Size = (uint)PokemonSize.All;
-            Form = null;
+            FormsString = null;
             Areas = new List<string>();
             IVList = new List<string>();
         }

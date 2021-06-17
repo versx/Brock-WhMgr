@@ -35,10 +35,10 @@
 
         public string GetPossibleInvasionEncounters()
         {
-            var toInt = new Func<string, int>(x =>
+            var toInt = new Func<string, uint>(x =>
             {
                 var val = x.Split('_')[0];
-                if (!int.TryParse(val, out var result))
+                if (!uint.TryParse(val, out var result))
                 {
                     Console.Error.WriteLine($"Failed to parse {val} as integer");
                 }
@@ -62,9 +62,9 @@
             return msg;
         }
 
-        public List<int> GetEncounterRewards()
+        public List<uint> GetEncounterRewards()
         {
-            var list = new List<int>();
+            var list = new List<uint>();
             if (Encounters == null)
                 return list;
 
@@ -97,10 +97,10 @@
             return list;
         }
 
-        private static int ParsePokemonId(string value)
+        private static uint ParsePokemonId(string value)
         {
             var split = value.Split('_');
-            if (!int.TryParse(split[0], out var id))
+            if (!uint.TryParse(split[0], out var id))
             {
                 _logger.Error($"Failed to parse grunttype {split[0]}");
                 return 0;

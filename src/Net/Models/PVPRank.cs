@@ -14,7 +14,7 @@
         public double? Percentage { get; set; }
 
         [JsonProperty("pokemon")]
-        public int PokemonId { get; set; }
+        public uint PokemonId { get; set; }
 
         [JsonProperty("form")]
         public int FormId { get; set; }

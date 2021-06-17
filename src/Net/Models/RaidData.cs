@@ -38,7 +38,7 @@
         public string GymUrl { get; set; }
 
         [JsonProperty("pokemon_id")]
-        public int PokemonId { get; set; }
+        public uint PokemonId { get; set; }
 
         [JsonProperty("team_id")]
         public PokemonTeam Team { get; set; } = PokemonTeam.Neutral;
@@ -164,7 +164,10 @@
                 Title = DynamicReplacementEngine.ReplaceText(alert.Title, properties),
                 Url = DynamicReplacementEngine.ReplaceText(alert.Url, properties),
                 ImageUrl = DynamicReplacementEngine.ReplaceText(alert.ImageUrl, properties),
-                ThumbnailUrl = DynamicReplacementEngine.ReplaceText(alert.IconUrl, properties),
+                Thumbnail = new DiscordEmbedBuilder.EmbedThumbnail
+                {
+                    Url = DynamicReplacementEngine.ReplaceText(alert.IconUrl, properties),
+                },
                 Description = DynamicReplacementEngine.ReplaceText(alert.Content, properties),
                 Color = (IsExEligible ? 0 /*ex*/ : int.Parse(Level)).BuildRaidColor(server),
                 Footer = new DiscordEmbedBuilder.EmbedFooter

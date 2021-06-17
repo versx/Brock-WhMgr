@@ -15,19 +15,20 @@
     using ServiceStack.DataAnnotations;
     using ServiceStack.OrmLite;
 
+    using WhMgr.Configuration;
     using WhMgr.Data;
     using WhMgr.Diagnostics;
     using WhMgr.Extensions;
     using WhMgr.Localization;
 
-    public class ShinyStats
+    public class ShinyStats : BaseCommandModule
     {
         private static readonly IEventLogger _logger = EventLogger.GetLogger("SHINY_STATS", Program.LogLevel);
-        private readonly Dependencies _dep;
+        private readonly WhConfigHolder _config;
 
-        public ShinyStats(Dependencies dep)
+        public ShinyStats(WhConfigHolder config)
         {
-            _dep = dep;
+            _config = config;
         }
 
         [
@@ -36,15 +37,15 @@
         ]
         public async Task GetShinyStatsAsync(CommandContext ctx)
         {
-            var guildId = ctx.Guild?.Id ?? ctx.Client.Guilds.Keys.FirstOrDefault(x => _dep.WhConfig.Servers.ContainsKey(x));
+            var guildId = ctx.Guild?.Id ?? ctx.Client.Guilds.Keys.FirstOrDefault(x => _config.Instance.Servers.ContainsKey(x));
 
-            if (!_dep.WhConfig.Servers.ContainsKey(guildId))
+            if (!_config.Instance.Servers.ContainsKey(guildId))
             {
                 await ctx.RespondEmbed(Translator.Instance.Translate("ERROR_NOT_IN_DISCORD_SERVER"), DiscordColor.Red);
                 return;
             }
 
-            var server = _dep.WhConfig.Servers[guildId];
+            var server = _config.Instance.Servers[guildId];
             if (!server.ShinyStats.Enabled)
                 return;
 
@@ -61,7 +62,7 @@
                 await ctx.Client.DeleteMessages(server.ShinyStats.ChannelId);
             }
 
-            var stats = await GetShinyStats(_dep.WhConfig.Database.Scanner.ToString());
+            var stats = await GetShinyStats(_config.Instance.Database.Scanner.ToString());
             var sorted = stats.Keys.ToList();
             sorted.Sort();
             if (sorted.Count > 0)
@@ -75,10 +76,10 @@
                 if (pokemon == 0)
                     continue;
 
-                if (!MasterFile.Instance.Pokedex.ContainsKey((int)pokemon))
+                if (!MasterFile.Instance.Pokedex.ContainsKey(pokemon))
                     continue;
 
-                var pkmn = MasterFile.Instance.Pokedex[(int)pokemon];
+                var pkmn = MasterFile.Instance.Pokedex[pokemon];
                 var pkmnStats = stats[pokemon];
                 var chance = pkmnStats.Shiny == 0 || pkmnStats.Total == 0 ? 0 : Convert.ToInt32(pkmnStats.Total / pkmnStats.Shiny);
                 if (chance == 0)

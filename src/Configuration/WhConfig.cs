@@ -73,7 +73,7 @@
         /// Gets or sets the event Pokemon IDs list
         /// </summary>
         [JsonProperty("eventPokemonIds")]
-        public List<int> EventPokemonIds { get; set; }
+        public List<uint> EventPokemonIds { get; set; }
 
         /// <summary>
         /// Gets or sets the minimum IV value for an event Pokemon to be to process
@@ -176,7 +176,7 @@
             Servers = new Dictionary<ulong, DiscordServerConfig>();
             Database = new ConnectionStringsConfig();
             Urls = new UrlConfig();
-            EventPokemonIds = new List<int>();
+            EventPokemonIds = new List<uint>();
             EventMinimumIV = 90;
             IconStyles = new Dictionary<string, string>();
             StaticMaps = new Dictionary<string, string>();

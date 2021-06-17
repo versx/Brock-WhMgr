@@ -790,7 +790,7 @@
 
             public string Level { get; }
 
-            public int PokemonId { get; }
+            public uint PokemonId { get; }
 
             public int FormId { get; }
 

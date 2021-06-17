@@ -35,7 +35,7 @@
             JsonProperty("reward_pokemon_id"),
             Alias("reward_pokemon_id"),
         ]
-        public int RewardPokemonId { get; set; }
+        public uint RewardPokemonId { get; set; }
 
         [
             JsonProperty("city"),

@@ -25,7 +25,7 @@
         #region Properties
 
         [JsonProperty("pokemon")]
-        public IReadOnlyDictionary<int, PokedexPokemon> Pokedex { get; set; }
+        public IReadOnlyDictionary<uint, PokedexPokemon> Pokedex { get; set; }
 
         //[JsonProperty("moves")]
         //public IReadOnlyDictionary<int, Moveset> Movesets { get; set; }
@@ -61,7 +61,7 @@
         public Dictionary<string, string> CustomEmojis { get; set; }
 
         [JsonIgnore]
-        public IReadOnlyDictionary<PokemonRarity, List<int>> PokemonRarity { get; set; }
+        public IReadOnlyDictionary<PokemonRarity, List<uint>> PokemonRarity { get; set; }
 
         #region Singletons
 
@@ -86,12 +86,12 @@
         public MasterFile()
         {
             CpMultipliers = LoadInit<Dictionary<double, double>>(Path.Combine(Strings.DataFolder, CpMultipliersFileName));
-            PokemonRarity = LoadInit<Dictionary<PokemonRarity, List<int>>>(Path.Combine(Strings.DataFolder, RarityFileName));
+            PokemonRarity = LoadInit<Dictionary<PokemonRarity, List<uint>>>(Path.Combine(Strings.DataFolder, RarityFileName));
             Emojis = new Dictionary<string, ulong>();
             CustomEmojis = LoadInit<Dictionary<string, string>>(Path.Combine(Strings.DataFolder, EmojisFileName));
         }
 
-        public static PokedexPokemon GetPokemon(int pokemonId, int formId)
+        public static PokedexPokemon GetPokemon(uint pokemonId, int formId)
         {
             if (!Instance.Pokedex.ContainsKey(pokemonId))
                 return null;

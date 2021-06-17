@@ -121,7 +121,10 @@
                 Title = DynamicReplacementEngine.ReplaceText(alert.Title, properties),
                 Url = DynamicReplacementEngine.ReplaceText(alert.Url, properties),
                 ImageUrl = DynamicReplacementEngine.ReplaceText(alert.ImageUrl, properties),
-                ThumbnailUrl = DynamicReplacementEngine.ReplaceText(alert.IconUrl, properties),
+                Thumbnail = new DiscordEmbedBuilder.EmbedThumbnail
+                {
+                    Url = DynamicReplacementEngine.ReplaceText(alert.IconUrl, properties),
+                },
                 Description = DynamicReplacementEngine.ReplaceText(alert.Content, properties),
                 Color = GameplayCondition.BuildWeatherColor(server),
                 Footer = new DiscordEmbedBuilder.EmbedFooter
@@ -143,8 +146,7 @@
         private IReadOnlyDictionary<string, string> GetProperties(DiscordGuild guild, WhConfig whConfig, string city, string weatherImageUrl)
         {
             var weather = Translator.Instance.GetWeather(GameplayCondition);
-            var weatherKey = $"weather_{Convert.ToInt32(GameplayCondition)}";
-            var weatherEmoji = MasterFile.Instance.Emojis.ContainsKey(weatherKey) && GameplayCondition != WeatherCondition.None ? GameplayCondition.GetWeatherEmojiIcon() : string.Empty;
+            var weatherEmoji = GameplayCondition != WeatherCondition.None ? GameplayCondition.GetEmojiIcon("weather", false) : string.Empty;
             var hasWeather = GameplayCondition != WeatherCondition.None;
             var gmapsLink = string.Format(Strings.GoogleMaps, Latitude, Longitude);
             var appleMapsLink = string.Format(Strings.AppleMaps, Latitude, Longitude);
@@ -214,7 +216,7 @@
                 return newMultiPolygon;
 
             multiPolygon.ForEach(x => newMultiPolygon.Add(new Polygon { x[1], x[0] }));
-            newMultiPolygon.Add(newMultiPolygon[newMultiPolygon.Count - 1]);
+            newMultiPolygon.Add(newMultiPolygon[^1]);
             return newMultiPolygon;
         }
 

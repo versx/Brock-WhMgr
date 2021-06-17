@@ -31,8 +31,8 @@ There is no limit to the amount of alarms you can add under the `alarms` propert
             "alerts": "default.json",
             // Alarm filters
             "filters":"all.json",
-            // Mentionable string that supports DTS  
-            "mentions":"<!@324234324> <iv> L<lvl> <geofence>",  
+            // Mentionable string that supports DTS  (!@ for user, @& for role)
+            "description":"<!@324234324> <@&1123454> <iv> L<lvl> <geofence>",  
             // Either the geofence file path (`geojson` or `ini` format) or the geofence name
             "geofences": ["geofence1.txt", "city1"],
             // Discord webhook url address

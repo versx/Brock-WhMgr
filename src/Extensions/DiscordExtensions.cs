@@ -10,7 +10,7 @@
     using DSharpPlus;
     using DSharpPlus.CommandsNext;
     using DSharpPlus.Entities;
-    using DSharpPlus.Interactivity;
+    using DSharpPlus.Interactivity.Extensions;
     using WeatherCondition = POGOProtos.Rpc.GameplayWeatherProto.Types.WeatherCondition;
 
     using WhMgr.Configuration;
@@ -74,29 +74,29 @@
             return messagesSent;
         }
 
-        public static async Task<DiscordMessage> SendDirectMessage(this DiscordClient client, DiscordUser user, DiscordEmbed embed)
+        public static async Task<DiscordMessage> SendDirectMessage(this DiscordMember member, DiscordEmbed embed)
         {
             if (embed == null)
                 return null;
 
-            return await client.SendDirectMessage(user, string.Empty, embed);
+            return await member.SendDirectMessage(string.Empty, embed);
         }
 
-        public static async Task<DiscordMessage> SendDirectMessage(this DiscordClient client, DiscordUser user, string message, DiscordEmbed embed)
+        public static async Task<DiscordMessage> SendDirectMessage(this DiscordMember member, string message, DiscordEmbed embed)
         {
             try
             {
-                var dm = await client.CreateDmAsync(user);
+                var dm = await member.CreateDmChannelAsync();
                 if (dm != null)
                 {
-                    var msg = await dm.SendMessageAsync(message, false, embed);
+                    var msg = await dm.SendMessageAsync(message, embed);
                     return msg;
                 }
             }
             catch (Exception)
             {
                 //_logger.Error(ex);
-                _logger.Error($"Failed to send DM to user {user.Username}.");
+                _logger.Error($"Failed to send DM to user {member.Username}.");
             }
 
             return null;
@@ -104,7 +104,7 @@
 
         #endregion
 
-        private static readonly Dictionary<(ulong, ulong), Task<DiscordMember>> MemberTasks = new Dictionary<(ulong, ulong), Task<DiscordMember>>();
+        private static readonly Dictionary<(ulong, ulong), Task<DiscordMember>> MemberTasks = new();
 
         public static async Task<DiscordMember> GetMemberById(this DiscordClient client, ulong guildId, ulong id)
         {
@@ -154,7 +154,7 @@
             DiscordMember member = null;
             try
             {
-                member = members?.FirstOrDefault(x => x.Id == id);
+                member = members?.FirstOrDefault(x => x.Value.Id == id).Value;
             }
             catch { }
             if (member == null)
@@ -294,14 +294,14 @@
                 return false;
 
             var guild = client.Guilds[guildId];
-            var member = guild.Members.FirstOrDefault(x => x.Id == userId);
-            if (member == null)
+            var member = guild.Members.FirstOrDefault(x => x.Value.Id == userId);
+            if (member.Value == null)
             {
                 _logger.Error($"Failed to get user with id {userId}.");
                 return false;
             }
 
-            return member.HasSupporterRole(supporterRoleIds);
+            return member.Value.HasSupporterRole(supporterRoleIds);
         }
 
         public static bool HasSupporterRole(this DiscordMember member, List<ulong> supporterRoleIds)
@@ -357,7 +357,7 @@
 
         public static DiscordRole GetRoleFromName(this DiscordGuild guild, string roleName)
         {
-            return guild?.Roles.FirstOrDefault(x => string.Compare(x.Name, roleName, true) == 0);
+            return guild?.Roles.FirstOrDefault(x => string.Compare(x.Value.Name, roleName, true) == 0).Value;
         }
 
         #endregion
@@ -419,7 +419,7 @@
         public static async Task<bool> Confirm(this CommandContext ctx, string message)
         {
             await ctx.RespondEmbed(message);
-            var interactivity = ctx.Client.GetModule<InteractivityModule>();
+            var interactivity = ctx.Client.GetInteractivity();
             if (interactivity == null)
             {
                 _logger.Error("Interactivity model failed to load!");
@@ -432,14 +432,14 @@
                 && Regex.IsMatch(x.Content, ConfirmRegex), 
                 TimeSpan.FromMinutes(2));
 
-            return Regex.IsMatch(m.Message.Content, YesRegex);
+            return Regex.IsMatch(m.Result.Content, YesRegex);
         }
 
         #region Colors
 
         public static DiscordColor BuildPokemonIVColor(this string iv, DiscordServerConfig server)
         {
-            if (!double.TryParse(iv.Substring(0, iv.Length - 1), out var result))
+            if (!double.TryParse(iv[0..^1], out var result))
             {
                 return DiscordColor.White;
             }
@@ -463,31 +463,17 @@
             {
                 return DiscordColor.White;
             }
-            string color;
-            switch (level)
+
+            string color = level switch
             {
-                case 1:
-                    color = server.DiscordEmbedColors.Raids.Level1;
-                    break;
-                case 2:
-                    color = server.DiscordEmbedColors.Raids.Level2;
-                    break;
-                case 3:
-                    color = server.DiscordEmbedColors.Raids.Level3;
-                    break;
-                case 4:
-                    color = server.DiscordEmbedColors.Raids.Level4;
-                    break;
-                case 5:
-                    color = server.DiscordEmbedColors.Raids.Level5;
-                    break;
-                case 6:
-                    color = server.DiscordEmbedColors.Raids.Level6;
-                    break;
-                default:
-                    color = server.DiscordEmbedColors.Raids.Ex;
-                    break;
-            }
+                1 => server.DiscordEmbedColors.Raids.Level1,
+                2 => server.DiscordEmbedColors.Raids.Level2,
+                3 => server.DiscordEmbedColors.Raids.Level3,
+                4 => server.DiscordEmbedColors.Raids.Level4,
+                5 => server.DiscordEmbedColors.Raids.Level5,
+                6 => server.DiscordEmbedColors.Raids.Level6,
+                _ => server.DiscordEmbedColors.Raids.Ex,
+            };
             return new DiscordColor(color);
         }
 

@@ -65,7 +65,7 @@
             return value;
         }
 
-        public string GetPokemonName(int pokeId)
+        public string GetPokemonName(uint pokeId)
         {
             return Translate($"poke_{pokeId}");
         }

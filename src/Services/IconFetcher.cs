@@ -17,7 +17,7 @@
 
     class IconFetcher
     {
-        private static readonly IconSet _availablePokemonForms = new IconSet();
+        private static readonly IconSet _availablePokemonForms = new();
         private static IReadOnlyDictionary<string, string> _iconStyles;
 
         #region Singleton
@@ -38,7 +38,7 @@
 
         #endregion
 
-        public string GetPokemonIcon(string style, int pokemonId, int form = 0, int evolution = 0, Gender gender = Gender.Unset, int costume = 0, bool shiny = false)
+        public string GetPokemonIcon(string style, uint pokemonId, int form = 0, int evolution = 0, Gender gender = Gender.Unset, int costume = 0, bool shiny = false)
         {
             if (!_availablePokemonForms.ContainsKey(style))
             {

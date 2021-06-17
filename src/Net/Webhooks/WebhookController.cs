@@ -31,7 +31,7 @@
 
         private static readonly IEventLogger _logger = EventLogger.GetLogger("WHM", Program.LogLevel);
 
-        private readonly object _geofencesLock = new object();
+        private readonly object _geofencesLock = new();
         private readonly HttpServer _http;
         private readonly Dictionary<ulong, AlarmList> _alarms;
         private readonly WhConfigHolder _config;

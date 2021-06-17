@@ -6,9 +6,9 @@
 
     using DSharpPlus.CommandsNext;
     using DSharpPlus.Entities;
-    using DSharpPlus.Interactivity;
+    using DSharpPlus.Interactivity.Extensions;
 
-    static class DiscordInteractivityExtensions
+    static class InteractivityExtensions
     {
         public static async Task<int> GetSubscriptionTypeSelection(this CommandContext ctx)
         {
@@ -29,17 +29,17 @@ Select the type of subscription to create:
             await message.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, ":five:"));
             await message.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, ":six:"));
 
-            var interactivity = ctx.Client.GetInteractivityModule();
+            var interactivity = ctx.Client.GetInteractivity();
             // TODO: Configurable subscription timeout
-            var resultReact = await interactivity.WaitForMessageReactionAsync(x => !string.IsNullOrEmpty(x.Name), message, ctx.User, TimeSpan.FromMinutes(3));
-            if (resultReact == null)
+            var resultReact = await interactivity.WaitForReactionAsync(x => !string.IsNullOrEmpty(x.Emoji?.Name), message, ctx.User, TimeSpan.FromMinutes(3));
+            if (resultReact.Result == null)
             {
                 await ctx.RespondEmbed($"Invalid result", DiscordColor.Red);
                 return 0;
             }
 
             await message.DeleteAsync();
-            switch (resultReact.Emoji.Name.ToLower())
+            switch (resultReact.Result.Emoji.Name.ToLower())
             {
                 case "1⃣": return 1;
                 case "2⃣": return 2;
@@ -53,14 +53,14 @@ Select the type of subscription to create:
 
         public static async Task<string> WaitForUserChoice(this CommandContext ctx, bool allowNull = false)
         {
-            var interactivity = ctx.Client.GetInteractivityModule();
+            var interactivity = ctx.Client.GetInteractivity();
             // TODO: Configurable subscription timeout
             var result = await interactivity.WaitForMessageAsync(x => x.Author.Id == ctx.User.Id && (allowNull && string.IsNullOrEmpty(x.Content)) || (!allowNull && !string.IsNullOrEmpty(x.Content)), TimeSpan.FromMinutes(3));
-            var content = result?.Message.Content;
+            var content = result.Result.Content;
             try
             {
                 // Bot can't delete user messages in DMs
-                await result.Message?.DeleteAsync();
+                await result.Result.DeleteAsync();
             }
             catch { }
             return content;
