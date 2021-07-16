@@ -40,6 +40,8 @@
 
         #endregion
 
+        public static Dictionary<ulong, Dictionary<ulong, string>> FiltersCache = new Dictionary<ulong, Dictionary<ulong, string>>();
+
         #region Properties
 
         /// <summary>
@@ -404,16 +406,64 @@
 
         #region Alarms Initialization
 
-        private void LoadAlarms()
+        public void LoadAlarms()
         {
             _alarms.Clear();
+            FiltersCache.Clear();
             
             foreach (var (serverId, serverConfig) in _config.Instance.Servers)
             {
                 var alarms = LoadAlarms(serverId, serverConfig.AlarmsFile);
-                
                 _alarms.Add(serverId, alarms);
+
+                ThreadPool.QueueUserWorkItem(_ =>
+                {
+                    var filters = GetFilterMappings(alarms);
+                    foreach (var filter in filters)
+                    {
+                        if (FiltersCache.ContainsKey(filter.Key))
+                            FiltersCache[filter.Key] = filter.Value;
+                        else
+                            FiltersCache.Add(filter.Key, filter.Value);
+                    }
+
+                    _logger.Info($"Finished building filter cache for guild {serverId}");
+                });
             }
+        }
+
+        private Dictionary<ulong, Dictionary<ulong, string>> GetFilterMappings(AlarmList alarms)
+        {
+            var dict = new Dictionary<ulong, Dictionary<ulong, string>>();
+            foreach (var alarm in alarms.Alarms)
+            {
+                var webhook = DownloadData<WebhookData>(alarm.Webhook);
+                if (webhook == null)
+                {
+                    _logger.Warn($"Webhook {alarm.Webhook} returned empty response, skipping...");
+                    continue;
+                }
+                if (!dict.ContainsKey(webhook.GuildId))
+                {
+                    dict.Add(webhook.GuildId, new Dictionary<ulong, string>
+                    {
+                        { webhook.ChannelId, alarm.FiltersFile },
+                    });
+                }
+                else
+                {
+                    if (!dict[webhook.GuildId].ContainsKey(webhook.ChannelId))
+                    {
+                        dict[webhook.GuildId].Add(webhook.ChannelId, alarm.FiltersFile);
+                    }
+                    else
+                    {
+                        dict[webhook.GuildId][webhook.ChannelId] = alarm.FiltersFile;
+                    }
+                }
+                Thread.Sleep(5);
+            }
+            return dict;
         }
 
         private AlarmList LoadAlarms(ulong forGuildId, string alarmsFilePath)
@@ -1153,5 +1203,23 @@
         }
 
         #endregion
+
+        public static T DownloadData<T>(string url)
+        {
+            var json = NetUtil.Get(url);
+            if (json == null)
+                return default;
+            var data = JsonConvert.DeserializeObject<T>(json);
+            return data;
+        }
+    }
+
+    public class WebhookData
+    {
+        [JsonProperty("channel_id")]
+        public ulong ChannelId { get; set; }
+
+        [JsonProperty("guild_id")]
+        public ulong GuildId { get; set; }
     }
 }

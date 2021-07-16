@@ -88,6 +88,7 @@
             using (var wc = new WebClient())
             {
                 wc.Proxy = null;
+                wc.Headers[HttpRequestHeader.UserAgent] = Strings.BotName;
                 try
                 {
                     return wc.DownloadString(url);

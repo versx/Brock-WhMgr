@@ -291,7 +291,7 @@
             Invalid = new List<string>();
         }
 
-        public static PokemonValidation Validate(string pokemonList, int maxPokemonId)// = 999)
+        public static PokemonValidation Validate(string pokemonList, uint maxPokemonId)// = 999)
         {
             if (string.IsNullOrEmpty(pokemonList))
                 return null;
@@ -299,7 +299,9 @@
             pokemonList = pokemonList.Replace(" ", "");
 
             PokemonValidation validation;
-            if (pokemonList.Contains("-") && int.TryParse(pokemonList.Split('-')[0], out var startRange) && int.TryParse(pokemonList.Split('-')[1], out var endRange))
+            if (pokemonList.Contains("-") &&
+                uint.TryParse(pokemonList.Split('-')[0], out var startRange) &&
+                uint.TryParse(pokemonList.Split('-')[1], out var endRange))
             {
                 //If `poke` param is a range
                 var range = GetListFromRange(startRange, endRange);
@@ -317,7 +319,7 @@
                 }
 
                 var genRange = Strings.PokemonGenerationRanges[gen];
-                var range = GetListFromRange(genRange.Start, genRange.End);
+                var range = GetListFromRange((uint)genRange.Start, (uint)genRange.End);
                 validation = range.ValidatePokemon();
             }
             else if (string.Compare(pokemonList, Strings.All, true) == 0)
@@ -334,7 +336,7 @@
             return validation;
         }
 
-        public static List<string> GetListFromRange(int startRange, int endRange)
+        public static List<string> GetListFromRange(uint startRange, uint endRange)
         {
             var list = new List<string>();
             for (; startRange <= endRange; startRange++)

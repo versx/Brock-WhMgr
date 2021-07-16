@@ -178,6 +178,7 @@
                 commands.RegisterCommands<Gyms>();
                 commands.RegisterCommands<Quests>();
                 commands.RegisterCommands<Settings>();
+                commands.RegisterCommands<ModifyFilters>();
                 if (serverConfig.Subscriptions.Enabled)
                 {
                     commands.RegisterCommands<Notifications>();
