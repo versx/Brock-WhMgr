@@ -165,16 +165,16 @@
             var properties = GetProperties(client.Guilds[guildId], nest, pokemonImageUrl);
             var eb = new DiscordEmbedBuilder
             {
-                Title = DynamicReplacementEngine.ReplaceText(alertMessage.Title, properties),
-                Url = DynamicReplacementEngine.ReplaceText(alertMessage.Url, properties),
-                ImageUrl = DynamicReplacementEngine.ReplaceText(alertMessage.ImageUrl, properties),
-                ThumbnailUrl = DynamicReplacementEngine.ReplaceText(alertMessage.IconUrl, properties),
-                Description = DynamicReplacementEngine.ReplaceText(alertMessage.Content, properties),
+                Title = Renderer.Parse(alertMessage.Title, properties),
+                Url = Renderer.Parse(alertMessage.Url, properties),
+                ImageUrl = Renderer.Parse(alertMessage.ImageUrl, properties),
+                ThumbnailUrl = Renderer.Parse(alertMessage.IconUrl, properties),
+                Description = Renderer.Parse(alertMessage.Content, properties),
                 Color = DiscordColor.Green,
                 Footer = new DiscordEmbedBuilder.EmbedFooter
                 {
-                    Text = DynamicReplacementEngine.ReplaceText(alertMessage.Footer?.Text, properties),
-                    IconUrl = DynamicReplacementEngine.ReplaceText(alertMessage.Footer?.IconUrl, properties)
+                    Text = Renderer.Parse(alertMessage.Footer?.Text, properties),
+                    IconUrl = Renderer.Parse(alertMessage.Footer?.IconUrl, properties)
                 }
             };
             return eb.Build();

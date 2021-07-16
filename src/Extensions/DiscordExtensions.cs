@@ -190,7 +190,6 @@
         internal static async Task<bool> IsDirectMessageSupported(this CommandContext ctx, WhConfig config)
         {
             var exists = ctx.Client.Guilds.Keys.FirstOrDefault(x => config.Servers.ContainsKey(x)) > 0;
-            //if (message?.Channel?.Guild == null)
             if (!exists)
             {
                 await ctx.Message.RespondEmbed(Translator.Instance.Translate("DIRECT_MESSAGE_NOT_SUPPORTED", new { author = ctx.Message.Author.Username }), DiscordColor.Yellow);

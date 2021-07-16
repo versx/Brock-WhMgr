@@ -161,21 +161,21 @@
             var properties = GetProperties(client.Guilds[guildId], whConfig, city, raidImageUrl);
             var eb = new DiscordEmbedBuilder
             {
-                Title = DynamicReplacementEngine.ReplaceText(alert.Title, properties),
-                Url = DynamicReplacementEngine.ReplaceText(alert.Url, properties),
-                ImageUrl = DynamicReplacementEngine.ReplaceText(alert.ImageUrl, properties),
-                ThumbnailUrl = DynamicReplacementEngine.ReplaceText(alert.IconUrl, properties),
-                Description = DynamicReplacementEngine.ReplaceText(alert.Content, properties),
+                Title = Renderer.Parse(alert.Title, properties),
+                Url = Renderer.Parse(alert.Url, properties),
+                ImageUrl = Renderer.Parse(alert.ImageUrl, properties),
+                ThumbnailUrl = Renderer.Parse(alert.IconUrl, properties),
+                Description = Renderer.Parse(alert.Content, properties),
                 Color = (IsExEligible ? 0 /*ex*/ : int.Parse(Level)).BuildRaidColor(MasterFile.Instance.DiscordEmbedColors),
                 Footer = new DiscordEmbedBuilder.EmbedFooter
                 {
-                    Text = DynamicReplacementEngine.ReplaceText(alert.Footer?.Text, properties),
-                    IconUrl = DynamicReplacementEngine.ReplaceText(alert.Footer?.IconUrl, properties)
+                    Text = Renderer.Parse(alert.Footer?.Text, properties),
+                    IconUrl = Renderer.Parse(alert.Footer?.IconUrl, properties)
                 }
             };
-            var username = DynamicReplacementEngine.ReplaceText(alert.Username, properties);
-            var iconUrl = DynamicReplacementEngine.ReplaceText(alert.AvatarUrl, properties);
-            var description = DynamicReplacementEngine.ReplaceText(alarm?.Description, properties);
+            var username = Renderer.Parse(alert.Username, properties);
+            var iconUrl = Renderer.Parse(alert.AvatarUrl, properties);
+            var description = Renderer.Parse(alarm?.Description, properties);
             return new DiscordEmbedNotification(username, iconUrl, description, new List<DiscordEmbed> { eb.Build() });
         }
 
