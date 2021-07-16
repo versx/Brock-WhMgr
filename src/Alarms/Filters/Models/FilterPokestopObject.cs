@@ -4,6 +4,7 @@
     using System.Collections.Generic;
 
     using Newtonsoft.Json;
+    using InvasionCharacter = POGOProtos.Rpc.EnumWrapper.Types.InvasionCharacter;
 
     /// <summary>
     /// Pokemon filters
@@ -35,11 +36,18 @@
         public bool Invasions { get; set; }
 
         /// <summary>
+        /// Gets or sets the Invasion types to report
+        /// </summary>
+        [JsonProperty("invasion_types")]
+        public Dictionary<InvasionCharacter, bool> InvasionTypes { get; set; } // TODO: Invasion type string
+
+        /// <summary>
         /// Instantiate a new <see cref="FilterPokestopObject"/> class
         /// </summary>
         public FilterPokestopObject()
         {
             LureTypes = new List<string>();
+            InvasionTypes = new Dictionary<InvasionCharacter, bool>();
         }
     }
 }
