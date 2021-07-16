@@ -265,16 +265,32 @@
             }
 
             // Check if Pokemon is in event Pokemon list
-            if (_config.Instance.EventPokemonIds.Contains(pkmn.Id) && _config.Instance.EventPokemonIds.Count > 0)
+            if (_config.Instance.EventPokemon.PokemonIds.Count > 0)
             {
-                // Skip Pokemon if no IV stats.
-                if (pkmn.IsMissingStats)
-                    return;
-
                 var iv = PokemonData.GetIV(pkmn.Attack, pkmn.Defense, pkmn.Stamina);
                 // Skip Pokemon if IV is greater than 0%, less than 90%, and does not match any PvP league stats.
-                if (iv > 0 && iv < _config.Instance.EventMinimumIV && !pkmn.MatchesGreatLeague && !pkmn.MatchesUltraLeague)
-                    return;
+                var shouldExclude = iv > 0 && iv < _config.Instance.EventPokemon.MinimumIV && !pkmn.MatchesGreatLeague && !pkmn.MatchesUltraLeague;
+                if (_config.Instance.EventPokemon.PokemonIds.Contains(pkmn.Id))
+                {                    
+                    switch (_config.Instance.EventPokemon?.Type)
+                    {
+                        case FilterType.Exclude:
+                            // Skip Pokemon if no IV stats.
+                            if (pkmn.IsMissingStats) return;
+                            if (shouldExclude) return;
+                            break;
+                    }
+                }
+                else
+                {
+                    // Pokemon not in event Pokemon list
+                    switch (_config.Instance.EventPokemon?.Type)
+                    {
+                        case FilterType.Include:
+                            if (shouldExclude) return;
+                            break;
+                    }
+                }
             }
 
             ProcessPokemon(pkmn);

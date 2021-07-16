@@ -70,17 +70,10 @@
         public UrlConfig Urls { get; set; }
 
         /// <summary>
-        /// Gets or sets the event Pokemon IDs list
+        /// Gets or sets the event Pokemon configuration
         /// </summary>
-        [JsonProperty("eventPokemonIds")]
-        public List<uint> EventPokemonIds { get; set; }
-
-        /// <summary>
-        /// Gets or sets the minimum IV value for an event Pokemon to be to process
-        /// for channel alarms or direct message subscriptions
-        /// </summary>
-        [JsonProperty("eventMinimumIV")]
-        public int EventMinimumIV { get; set; }
+        [JsonProperty("eventPokemon")]
+        public EventPokemonConfig EventPokemon { get; set; }
 
         /// <summary>
         /// Gets or sets the icon styles
@@ -176,8 +169,7 @@
             Servers = new Dictionary<ulong, DiscordServerConfig>();
             Database = new ConnectionStringsConfig();
             Urls = new UrlConfig();
-            EventPokemonIds = new List<uint>();
-            EventMinimumIV = 90;
+            EventPokemon = new EventPokemonConfig();
             IconStyles = new Dictionary<string, string>();
             StaticMaps = new Dictionary<string, string>();
             Twilio = new TwilioConfig();
@@ -242,6 +234,34 @@
             var config = MasterFile.LoadInit<WhConfig>(filePath);
             config.LoadDiscordServers();
             return config;
+        }
+    }
+
+    public class EventPokemonConfig
+    {
+        /// <summary>
+        /// Gets or sets the event filtering type to use, Include or Exclude
+        /// </summary>
+        [JsonProperty("type")]
+        public Alarms.Filters.FilterType Type { get; set; }
+
+        /// <summary>
+        /// Gets or sets the event Pokemon IDs list
+        /// </summary>
+        [JsonProperty("pokemonIds")]
+        public List<int> PokemonIds { get; set; }
+
+        /// <summary>
+        /// Gets or sets the minimum IV value for an event Pokemon to be to process
+        /// for channel alarms or direct message subscriptions
+        /// </summary>
+        [JsonProperty("minimumIV")]
+        public int MinimumIV { get; set; }
+
+        public EventPokemonConfig()
+        {
+            PokemonIds = new List<int>();
+            MinimumIV = 90;
         }
     }
 }

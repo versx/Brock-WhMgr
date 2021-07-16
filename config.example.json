@@ -32,8 +32,11 @@
       "database": "manualdb"
     }
   },
-  "eventPokemonIds": [],
-  "eventMinimumIV": "90",
+  "eventPokemon": {
+    "type": "Exclude",
+    "pokemonIds": [],
+	"minimumIV": 90
+  },
   "urls": {
     "staticMap": "http://tiles.example.com:8080",
     "scannerMap": "http://map.example.com/@/{0}/{1}/15"

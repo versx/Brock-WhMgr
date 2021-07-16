@@ -148,14 +148,24 @@ At a minimum you'll want to make sure your have your webhook listening port set 
             "database": "manualdb"
         }
     },
-    // List of Pokemon IDs to treat as event and restrict postings and subscriptions to 90% IV or higher. (Filled in automatically with `event set` command)  
-    "eventPokemonIds": [
-        129,
-        456,
-        320
-    ],
-    // Minimum IV value for an event Pokemon to have to meet in order to post via Discord channel alarm or direct message subscription.
-    "eventMinimumIV": "90",
+    // Event Pokemon filtering
+    "eventPokemon": {
+        /* Filtering type to use with deemed "event" Pokemon. Set to `Exclude` if you do not want the Pokemon reported unless
+           it meets the minimumIV value set (or is 0% or has PvP stats.
+           Set to `Include` if you only want the Pokemon reported if it meets the minimum IV value set. No other Pokemon will
+           be reported other than those in the event list.
+		   
+        */ 
+        "type": "Exclude",
+        // List of Pokemon IDs to treat as event and restrict postings and subscriptions to 90% IV or higher. (Filled in automatically with `event set` command)  
+        "pokemonIds": [
+            129,
+            456,
+            320
+        ],
+        // Minimum IV value for an event Pokemon to have to meet in order to post via Discord channel alarm or direct message subscription.
+        "minimumIV": 90
+    },
     // Image URL config
     "urls": {
         // Static map tileserver endpoint.  

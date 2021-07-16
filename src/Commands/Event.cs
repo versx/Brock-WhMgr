@@ -53,16 +53,16 @@
                 }
             };
             var pkmnNames = new List<string>();
-            for (var i = 0; i < _dep.WhConfig.EventPokemonIds.Count; i++)
+            for (var i = 0; i < _dep.WhConfig.EventPokemon.PokemonIds.Count; i++)
             {
-                var pkmnId = _dep.WhConfig.EventPokemonIds[i];
+                var pkmnId = _dep.WhConfig.EventPokemon.PokemonIds[i];
                 if (MasterFile.Instance.Pokedex.ContainsKey(pkmnId))
                 {
                     pkmnNames.Add(pkmnId + ":" + MasterFile.Instance.Pokedex[pkmnId].Name);
                 }
             }
 
-            eb.AddField("Event Pokemon", string.Join("\r\n", pkmnNames));
+            eb.AddField($"Event Pokemon (Filter Type: {_dep.WhConfig.EventPokemon.Type}, {_dep.WhConfig.EventPokemon.MinimumIV}%)", string.Join("\r\n", pkmnNames));
             await ctx.RespondAsync(embed: eb);
         }
 
@@ -72,8 +72,19 @@
             Description("Sets a list of Pokemon as `event`.")
         ]
         public async Task SetAsync(CommandContext ctx,
-            [Description("Comma separated list of event Pokemon")] string eventPokemonIds = "0")
+            [Description("Filtering type to set")] string filterType,
+            [Description("Comma separated list of event Pokemon")] string eventPokemonIds = "0",
+            [Description("Minimum IV")] string minimumIV = "90")
         {
+            Alarms.Filters.FilterType ParseFilterType(string type)
+            {
+                if (type.ToLower().Contains("in"))
+                    return Alarms.Filters.FilterType.Include;
+                if (type.ToLower().Contains("ex"))
+                    return Alarms.Filters.FilterType.Exclude;
+                return Alarms.Filters.FilterType.Include;
+            }
+
             var eventPokemonSplit = eventPokemonIds.Split(',');
             var pkmnToAdd = new List<uint>();
             var pkmnFailed = new List<string>();
@@ -89,7 +100,15 @@
                 pkmnFailed.Add(eventPokemonId);
             }
 
-            _dep.WhConfig.EventPokemonIds = pkmnToAdd;
+            if (!int.TryParse(minimumIV, out var minIV))
+            {
+                // TODO: Failed to parse minimum IV, using default;
+                minIV = 90;
+            }
+
+            _dep.WhConfig.EventPokemon.Type = ParseFilterType(filterType);
+            _dep.WhConfig.EventPokemon.MinimumIV = minIV;
+            _dep.WhConfig.EventPokemon.PokemonIds = pkmnToAdd;
             _dep.WhConfig.Save(_dep.WhConfig.FileName);
 
             var pkmnNames = new List<string>();
@@ -141,7 +160,8 @@
                 pkmnFailed.Add(eventPokemonId);
             }
 
-            _dep.WhConfig.EventPokemonIds.AddRange(pkmnToAdd);
+
+            _dep.WhConfig.EventPokemon.PokemonIds.AddRange(pkmnToAdd.Distinct());
             _dep.WhConfig.Save(_dep.WhConfig.FileName);
 
             var pkmnNames = new List<string>();
@@ -193,7 +213,7 @@
                 pkmnFailed.Add(eventPokemonId);
             }
 
-            pkmnToRemove.ForEach(x => _dep.WhConfig.EventPokemonIds.Remove(x));
+            pkmnToRemove.ForEach(x => _dep.WhConfig.EventPokemon.PokemonIds.Remove(x));
             _dep.WhConfig.Save(_dep.WhConfig.FileName);
 
             var pkmnNames = new List<string>();
