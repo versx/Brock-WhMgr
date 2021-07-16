@@ -84,7 +84,10 @@
             s_timer.Elapsed += Timer_Elapsed;
 
             // Hook into when Windows Time changes - Thanks to Nicole1982 for the suggestion & BruceN for the help
+#if Windows
             Microsoft.Win32.SystemEvents.TimeChanged += WindowsTimeChangeHandler;
+#endif
+            // TODO: Add other platforms support
 
             // Start the timer
             s_timer.Start();
@@ -102,7 +105,10 @@
                 s_timer.Stop();
 
                 // As this is a static event, clean it up
+#if Windows
                 Microsoft.Win32.SystemEvents.TimeChanged -= WindowsTimeChangeHandler;
+#endif
+                // TODO: Add other platforms support
             }
         }
 

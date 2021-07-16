@@ -3,31 +3,32 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text.Json.Serialization;
 
     using InvasionCharacter = POGOProtos.Rpc.EnumWrapper.Types.InvasionCharacter;
-    using Newtonsoft.Json;
     using ServiceStack.DataAnnotations;
 
     [
-        JsonObject("invasions"),
+        //JsonPropertyName("invasions"),
         Alias("invasions"),
     ]
     public class InvasionSubscription : SubscriptionItem
     {
         [
+            JsonPropertyName("subscription_id"),
             Alias("subscription_id"),
             ForeignKey(typeof(SubscriptionObject)),
         ]
         public int SubscriptionId { get; set; }
 
         [
-            JsonProperty("pokestop_name"),
+            JsonPropertyName("pokestop_name"),
             Alias("pokestop_name"),
         ]
         public string PokestopName { get; set; }
 
         [
-            JsonProperty("grunt_type"),
+            JsonPropertyName("grunt_type"),
             Alias("grunt_type"),
         ]
         public InvasionCharacter InvasionType { get; set; }
@@ -41,19 +42,19 @@
                                                                    .ToList();
 
         [
-            JsonProperty("reward_pokemon_id"),
+            JsonPropertyName("reward_pokemon_id"),
             Alias("reward_pokemon_id"),
         ]
         public string RewardPokemonIdString { get; set; }
 
         [
-            JsonProperty("city"),
+            JsonPropertyName("city"),
             Alias("city"),
         ]
         public List<string> Areas { get; set; }
 
         [
-            JsonProperty("location"),
+            JsonPropertyName("location"),
             Alias("location"),
         ]
         public string Location { get; set; }

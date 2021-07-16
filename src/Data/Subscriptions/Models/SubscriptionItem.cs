@@ -1,6 +1,7 @@
 ﻿namespace WhMgr.Data.Subscriptions.Models
 {
-    using Newtonsoft.Json;
+    using System.Text.Json.Serialization;
+
     using ServiceStack.DataAnnotations;
 
     /// <summary>
@@ -23,7 +24,7 @@
         /// Gets or sets the guild Id for the subscription item
         /// </summary>
         [
-             JsonProperty("guild_id"),
+             JsonPropertyName("guild_id"),
              Alias("guild_id"),
              Required
         ]
@@ -33,7 +34,7 @@
         /// Gets or sets the user id for the subscription id
         /// </summary>
         [
-            JsonProperty("user_id"),
+            JsonPropertyName("user_id"),
             Alias("user_id"),
             Required
         ]

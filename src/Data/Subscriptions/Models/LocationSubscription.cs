@@ -1,28 +1,29 @@
 ﻿namespace WhMgr.Data.Subscriptions.Models
 {
-    using Newtonsoft.Json;
+    using System.Text.Json.Serialization;
     using ServiceStack.DataAnnotations;
 
     [
-        JsonObject("locations"),
+        //JsonPropertyName("locations"),
         Alias("locations"),
     ]
     public class LocationSubscription : SubscriptionItem
     {
         [
+            JsonPropertyName("subscription_id"),
             Alias("subscription_id"),
             ForeignKey(typeof(SubscriptionObject)),
         ]
         public int SubscriptionId { get; set; }
 
         [
-            JsonProperty("name"),
+            JsonPropertyName("name"),
             Alias("name"),
         ]
         public string Name { get; set; }
 
         [
-            JsonProperty("distance"),
+            JsonPropertyName("distance"),
             Alias("distance"),
             Default(0),
         ]
@@ -32,7 +33,7 @@
         /// Gets or sets the latitude to use with distance checks
         /// </summary>
         [
-            JsonProperty("latitude"),
+            JsonPropertyName("latitude"),
             Alias("latitude"),
             Default(0),
         ]
@@ -42,7 +43,7 @@
         /// Gets or sets the longitude to use with distance checks
         /// </summary>
         [
-            JsonProperty("longitude"),
+            JsonPropertyName("longitude"),
             Alias("longitude"),
             Default(0),
         ]

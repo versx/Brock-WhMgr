@@ -1,48 +1,49 @@
 ﻿namespace WhMgr.Data.Subscriptions.Models
 {
     using System.Collections.Generic;
-    using Newtonsoft.Json;
+    using System.Text.Json.Serialization;
     using ServiceStack.DataAnnotations;
 
     [
-        JsonObject("gyms"),
+        //JsonPropertyName("gyms"),
         Alias("gyms"),
     ]
     public class GymSubscription : SubscriptionItem
     {
         [
+            JsonPropertyName("subscription_id"),
             Alias("subscription_id"),
             ForeignKey(typeof(SubscriptionObject)),
         ]
         public int SubscriptionId { get; set; }
 
         [
-            JsonProperty("name"),
+            JsonPropertyName("name"),
             Alias("name"),
             //Unique,
         ]
         public string Name { get; set; }
 
         [
-            JsonProperty("min_level"),
+            JsonPropertyName("min_level"),
             Alias("min_level"),
         ]
         public ushort MinimumLevel { get; set; }
 
         [
-            JsonProperty("max_level"),
+            JsonPropertyName("max_level"),
             Alias("max_level"),
         ]
         public ushort MaximumLevel { get; set; }
 
         [
-            JsonProperty("pokemon_ids"),
+            JsonPropertyName("pokemon_ids"),
             Alias("pokemon_ids"),
         ]
         public List<uint> PokemonIDs { get; set; }
 
         [
-            JsonProperty("location"),
+            JsonPropertyName("location"),
             Alias("location"),
         ]
         public string Location { get; set; }

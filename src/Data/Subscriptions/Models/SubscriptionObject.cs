@@ -2,8 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Text.Json.Serialization;
 
-    using Newtonsoft.Json;
     using ServiceStack.DataAnnotations;
 
     [Flags]
@@ -24,7 +24,7 @@
     /// User subscription class
     /// </summary>
     [
-        JsonObject("subscriptions"),
+        //JsonPropertyName("subscriptions"),
         Alias("subscriptions")
     ]
     public class SubscriptionObject : SubscriptionItem
@@ -34,7 +34,7 @@
         /// subscriptions are enabled or not
         /// </summary>
         [
-            JsonProperty("status"),
+            JsonPropertyName("status"),
             Alias("status"),
             Default((int)NotificationStatusType.All),
         ]
@@ -59,7 +59,7 @@
         /// Gets or sets the Pokemon subscriptions
         /// </summary>
         [
-            JsonProperty("pokemon"),
+            JsonPropertyName("pokemon"),
             Alias("pokemon"), 
             Reference,
         ]
@@ -69,7 +69,7 @@
         /// Gets or sets the PvP Pokemon subscriptions
         /// </summary>
         [
-            JsonProperty("pvp"),
+            JsonPropertyName("pvp"),
             Alias("pvp"),
             Reference,
         ]
@@ -79,7 +79,7 @@
         /// Gets or sets the Raid subscriptions
         /// </summary>
         [
-            JsonProperty("raids"),
+            JsonPropertyName("raids"),
             Alias("raids"), 
             Reference,
         ]
@@ -89,7 +89,7 @@
         /// Gets or sets the Gym subscriptions to use with Raid subscriptions
         /// </summary>
         [
-            JsonProperty("gyms"),
+            JsonPropertyName("gyms"),
             Alias("gyms"),
             Reference,
         ]
@@ -99,7 +99,7 @@
         /// Gets or sets the Quest subscriptions
         /// </summary>
         [
-            JsonProperty("quests"),
+            JsonPropertyName("quests"),
             Alias("quests"),
             Reference,
         ]
@@ -109,7 +109,7 @@
         /// Gets or sets the Team Rocket Invasion subscriptions
         /// </summary>
         [
-            JsonProperty("invasions"),
+            JsonPropertyName("invasions"),
             Alias("invasions"),
             Reference,
         ]
@@ -120,21 +120,21 @@
         /// to trigger
         /// </summary>
         [
-            JsonProperty("lures"),
+            JsonPropertyName("lures"),
             Alias("lures"),
             Reference,
         ]
         public List<LureSubscription> Lures { get; set; }
 
         [
-            JsonProperty("locations"),
+            JsonPropertyName("locations"),
             Alias("locations"),
             Reference,
         ]
         public List<LocationSubscription> Locations { get; set; }
 
         [
-            JsonProperty("location"),
+            JsonPropertyName("location"),
             Alias("location"),
             Default(null),
         ]
@@ -144,7 +144,7 @@
         /// Gets or sets the icon style to use for the subscription notification
         /// </summary>
         [
-            JsonProperty("icon_style"),
+            JsonPropertyName("icon_style"),
             Alias("icon_style"),
             Default("Default"),
         ]
@@ -154,7 +154,7 @@
         /// Gets or sets the phone number to send ultra rare Pokemon notifications to
         /// </summary>
         [
-            JsonProperty("phone_number"),
+            JsonPropertyName("phone_number"),
             Alias("phone_number"),
         ]
         public string PhoneNumber { get; set; }

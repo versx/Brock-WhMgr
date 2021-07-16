@@ -2,43 +2,44 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Text.Json.Serialization;
 
-    using Newtonsoft.Json;
     using ServiceStack.DataAnnotations;
 
     [
-        JsonObject("raids"),
+        //JsonPropertyName("raids"),
         Alias("raids"),
     ]
     public class RaidSubscription : SubscriptionItem
     {
         [
+            JsonPropertyName("subscription_id"),
             Alias("subscription_id"),
             ForeignKey(typeof(SubscriptionObject)),
         ]
         public int SubscriptionId { get; set; }
 
         [
-            JsonProperty("pokemon_id"),
+            JsonPropertyName("pokemon_id"),
             Alias("pokemon_id"), 
             Required,
         ]
         public uint PokemonId { get; set; }
 
         [
-            JsonProperty("form"),
+            JsonPropertyName("form"),
             Alias("form"),
         ]
         public string Form { get; set; }
 
         [
-            JsonProperty("city"),
+            JsonPropertyName("city"),
             Alias("city"),
         ]
         public List<string> Areas { get; set; }
 
         [
-            JsonProperty("location"),
+            JsonPropertyName("location"),
             Alias("location"),
         ]
         public string Location { get; set; }

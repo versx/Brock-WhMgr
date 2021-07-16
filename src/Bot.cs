@@ -317,7 +317,7 @@
                 // Create default emojis
                 await CreateEmojis(e.Guild.Id);
 
-                if (!(e.Client is DiscordClient client))
+                if (e.Client is not DiscordClient client)
                 {
                     _logger.Error($"DiscordClient is null, Unable to update status.");
                     return;
@@ -467,16 +467,14 @@
 
         private void DebugLogger_LogMessageReceived(object sender, DebugLogMessageEventArgs e)
         {
-            //Color
-            ConsoleColor color;
-            switch (e.Level)
+            var color = e.Level switch
             {
-                case DSharpPlus.LogLevel.Error: color = ConsoleColor.DarkRed; break;
-                case DSharpPlus.LogLevel.Warning: color = ConsoleColor.Yellow; break;
-                case DSharpPlus.LogLevel.Info: color = ConsoleColor.White; break;
-                case DSharpPlus.LogLevel.Critical: color = ConsoleColor.Red; break;
-                case DSharpPlus.LogLevel.Debug: default: color = ConsoleColor.DarkGray; break;
-            }
+                DSharpPlus.LogLevel.Error => ConsoleColor.DarkRed,
+                DSharpPlus.LogLevel.Warning => ConsoleColor.Yellow,
+                DSharpPlus.LogLevel.Info => ConsoleColor.White,
+                DSharpPlus.LogLevel.Critical => ConsoleColor.Red,
+                _ => ConsoleColor.DarkGray,
+            };
 
             //Source
             var sourceName = e.Application;
@@ -1085,7 +1083,7 @@
             Thread.Sleep(10 * 1000);
         }
 
-        private async Task PruneQuestChannels(DiscordClient client, DiscordServerConfig server)
+        private static async Task PruneQuestChannels(DiscordClient client, DiscordServerConfig server)
         {
             try
             {

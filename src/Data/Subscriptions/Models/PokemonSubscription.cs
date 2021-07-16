@@ -3,14 +3,14 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text.Json.Serialization;
 
-    using Newtonsoft.Json;
     using ServiceStack.DataAnnotations;
 
     using WhMgr.Net.Models;
 
     [
-        JsonObject("pokemon"),
+        //JsonPropertyName("pokemon"),
         Alias("pokemon"),
     ]
     public class PokemonSubscription : SubscriptionItem
@@ -18,6 +18,7 @@
         #region Properties
 
         [
+            JsonPropertyName("subscription_id"),
             Alias("subscription_id"),
             ForeignKey(typeof(SubscriptionObject)),
         ]
@@ -47,7 +48,7 @@
         }
 
         [
-            JsonProperty("pokemon_id"),
+            JsonPropertyName("pokemon_id"),
             Alias("pokemon_id"),
             Required,
         ]
@@ -60,43 +61,43 @@
         public List<string> Forms => FormsString?.Split(',').ToList();
 
         [
-            JsonProperty("form"),
+            JsonPropertyName("form"),
             Alias("form"),
         ]
         public string FormsString { get; set; }
 
         [
-            JsonProperty("min_cp"),
+            JsonPropertyName("min_cp"),
             Alias("min_cp"),
         ]
         public int MinimumCP { get; set; }
 
         [
-            JsonProperty("min_iv"),
+            JsonPropertyName("min_iv"),
             Alias("min_iv"),
         ]
         public int MinimumIV { get; set; }
 
         [
-            JsonProperty("iv_list"),
+            JsonPropertyName("iv_list"),
             Alias("iv_list"),
         ]
         public List<string> IVList { get; set; }
 
         [
-            JsonProperty("min_lvl"),
+            JsonPropertyName("min_lvl"),
             Alias("min_lvl"),
         ]
         public int MinimumLevel { get; set; }
 
         [
-            JsonProperty("max_lvl"),
+            JsonPropertyName("max_lvl"),
             Alias("max_lvl"),
         ]
         public int MaximumLevel { get; set; }
 
         [
-            JsonProperty("gender"),
+            JsonPropertyName("gender"),
             Alias("gender"),
         ]
         public string Gender { get; set; }
@@ -115,13 +116,13 @@
         public uint _Size { get; set; }
 
         [
-            JsonProperty("city"),
+            JsonPropertyName("city"),
             Alias("city"),
         ]
         public List<string> Areas { get; set; }
 
         [
-            JsonProperty("location"),
+            JsonPropertyName("location"),
             Alias("location"),
         ]
         public string Location { get; set; }
