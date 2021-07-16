@@ -24,7 +24,6 @@ fi
 # Copy locale translation files
 echo "Copying locale translation files... "
 mkdir -p "bin/static"
-cp -R "static/locale" "bin/static/"
 
 echo "Copying latest master file..."
 mkdir -p "bin/static/data"

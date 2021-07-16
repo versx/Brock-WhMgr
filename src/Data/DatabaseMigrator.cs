@@ -52,6 +52,7 @@
                 if (!result)
                 {
                     _logger.Error($"Failed to set current database version: {currentVersion}");
+                    Environment.Exit(-1);
                 }
             }
 
@@ -104,13 +105,14 @@
                         {
                             // Failed to execute query
                             _logger.Warn($"Failed to execute migration: {sql}");
-                            continue;
+                            Environment.Exit(-1);
                         }
                         _logger.Debug($"Migration execution result: {result}");
                     }
                     catch (Exception ex)
                     {
                         _logger.Error($"Migration failed: {ex}");
+                        Environment.Exit(-1);
                     }
                 }
 

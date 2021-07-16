@@ -1094,7 +1094,7 @@
                         continue;
                     }
 
-                    var geofence = GeofenceService.GetGeofence(alarm.GeofenceItems, new Location(weather.Latitude, weather.Longitude));
+                    var geofence = GeofenceService.PolygonIntersectsWithPolygon(alarm.GeofenceItems, weather.Polygon);
                     if (geofence == null)
                     {
                         //_logger.Info($"[{alarm.Name}] Skipping gym details GymId={gymDetails.GymId}, GymName={gymDetails.GymName}: not in geofence.");

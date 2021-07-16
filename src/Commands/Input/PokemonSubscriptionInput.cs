@@ -34,22 +34,38 @@
                 var split = userValue.Split('-');
                 if (split.Length != 3)
                 {
-                    await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_IV_VALUES").FormatText(_context.User.Username, userValue), DiscordColor.Red);
+                    await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_IV_VALUES").FormatText(new
+                    {
+                        author = _context.User.Username,
+                        iv = userValue,
+                    }), DiscordColor.Red);
                     return new IVResult();
                 }
                 if (!int.TryParse(split[0], out attack))
                 {
-                    await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_ATTACK_VALUE").FormatText(_context.User.Username, split[0]), DiscordColor.Red);
+                    await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_ATTACK_VALUE").FormatText(new
+                    {
+                        author = _context.User.Username,
+                        atk_iv = split[0],
+                    }), DiscordColor.Red);
                     return new IVResult();
                 }
                 if (!int.TryParse(split[1], out defense))
                 {
-                    await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_DEFENSE_VALUE").FormatText(_context.User.Username, split[1]), DiscordColor.Red);
+                    await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_DEFENSE_VALUE").FormatText(new
+                    {
+                        author = _context.User.Username,
+                        def_iv = split[1],
+                    }), DiscordColor.Red);
                     return new IVResult();
                 }
                 if (!int.TryParse(split[2], out stamina))
                 {
-                    await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_STAMINA_VALUE").FormatText(_context.User.Username, split[2]), DiscordColor.Red);
+                    await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_STAMINA_VALUE").FormatText(new
+                    {
+                        author = _context.User.Username,
+                        sta_iv = split[2],
+                    }), DiscordColor.Red);
                     return new IVResult();
                 }
             }
@@ -58,7 +74,11 @@
                 // User provided IV value as a whole
                 if (!int.TryParse(userValue, out realIV) || realIV < Strings.MinimumIV || realIV > Strings.MaximumIV)
                 {
-                    await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_IV_RANGE").FormatText(_context.User.Username, userValue), DiscordColor.Red);
+                    await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_IV_RANGE").FormatText(new
+                    {
+                        author = _context.User.Username,
+                        iv = userValue,
+                    }), DiscordColor.Red);
                     return new IVResult();
                 }
             }
@@ -85,12 +105,20 @@
                 var split = levelSub.Split('-');
                 if (!int.TryParse(split[0], out minLevel))
                 {
-                    await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_MINIMUM_LEVEL", _context.User.Username, split[0]), DiscordColor.Red);
+                    await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_MINIMUM_LEVEL", new
+                    {
+                        author = _context.User.Username,
+                        level = split[0],
+                    }), DiscordColor.Red);
                     return new LevelResult();
                 }
                 if (!int.TryParse(split[1], out maxLevel))
                 {
-                    await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_MAXIMUM_LEVEL", _context.User.Username, split[1]), DiscordColor.Red);
+                    await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_MAXIMUM_LEVEL", new
+                    {
+                        author = _context.User.Username,
+                        level = split[1],
+                    }), DiscordColor.Red);
                     return new LevelResult();
                 }
             }
@@ -99,7 +127,11 @@
                 // Only minimum level was provided
                 if (!int.TryParse(levelSub, out minLevel))
                 {
-                    await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_MINIMUM_LEVEL", _context.User.Username, levelSub), DiscordColor.Red);
+                    await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_MINIMUM_LEVEL", new
+                    {
+                        author = _context.User.Username,
+                        level = levelSub,
+                    }), DiscordColor.Red);
                     return new LevelResult();
                 }
             }
@@ -107,7 +139,11 @@
             // Validate minimum and maximum levels are within range
             if (minLevel < 0 || minLevel > 35)
             {
-                await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_LEVEL").FormatText(_context.User.Username, levelSub), DiscordColor.Red);
+                await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_LEVEL").FormatText(new
+                {
+                    author = _context.User.Username,
+                    level = levelSub,
+                }), DiscordColor.Red);
                 return new LevelResult();
             }
 
@@ -129,7 +165,11 @@
             if (!Strings.ValidGenders.Contains(gender.ToLower()))
             {
                 await _context.TriggerTypingAsync();
-                await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_GENDER").FormatText(_context.User.Username, gender), DiscordColor.Red);
+                await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_GENDER").FormatText(new
+                {
+                    author = _context.User.Username,
+                    gender = gender,
+                }), DiscordColor.Red);
                 return "*";
             }
 

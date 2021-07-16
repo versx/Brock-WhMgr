@@ -12,6 +12,7 @@
     using WhMgr.Data;
     using WhMgr.Data.Models.Discord;
     using WhMgr.Data.Subscriptions;
+    using WhMgr.Data.Subscriptions.Models;
     using WhMgr.Diagnostics;
     using WhMgr.Extensions;
     using WhMgr.Geofence;
@@ -29,7 +30,6 @@
 
     // TODO: List all subscriptions with info command
     // TODO: IV wildcards
-    // TODO: Egg subscriptions (maybe)
 
     public class Bot
     {
@@ -61,6 +61,7 @@
             IconFetcher.Instance.SetIconStyles(_whConfig.Instance.IconStyles);
 
             // Set translation language
+            Translator.Instance.CreateLocaleFiles();
             Translator.Instance.SetLocale(_whConfig.Instance.Locale);
 
             // Set database connection strings to static properties so we can access within our extension classes
@@ -342,9 +343,12 @@
 
             var hasBefore = e.RolesBefore.FirstOrDefault(x => server.DonorRoleIds.Contains(x.Id)) != null;
             var hasAfter = e.RolesAfter.FirstOrDefault(x => server.DonorRoleIds.Contains(x.Id)) != null;
+            var roleRemoved = hasBefore && !hasAfter;
+            var roleAdded = !hasBefore && hasAfter;
+            var subscription = _subProcessor.Manager.GetUserSubscriptions(e.Guild.Id, e.Member.Id);
 
             // Check if donor role was removed
-            if (hasBefore && !hasAfter)
+            if (roleRemoved)
             {
                 _logger.Info($"Member {e.Member.Username} ({e.Member.Id}) donor role removed, removing any city roles...");
                 // If so, remove all city/geofence/area roles
@@ -360,6 +364,28 @@
                     await e.Member.RevokeRoleAsync(role, "No longer a supporter/donor");
                 }
                 _logger.Info($"All city roles removed from member {e.Member.Username} ({e.Member.Id})");
+
+                if (subscription == null)
+                    return;
+
+                // Disable subscriptions for user
+                subscription.DisableNotificationType(NotificationStatusType.All);
+                if (!subscription.Save())
+                {
+                    _logger.Warn($"Failed to disable subscriptions for member no longer having donor access: ({e.Member.Username}) {e.Member.Id}");
+                }
+            }
+            else if (roleAdded)
+            {
+                if (subscription == null)
+                    return;
+
+                // Enable subscriptions for user if returning donor
+                subscription.EnableNotificationType(NotificationStatusType.All);
+                if (!subscription.Save())
+                {
+                    _logger.Warn($"Failed to enable subscriptions for returning member donor access: ({e.Member.Username}) {e.Member.Id}");
+                }
             }
         }
 
@@ -995,7 +1021,7 @@
             //var guildId = server.GuildId;
             _logger.Debug($"Posting shiny stats for guild {client.Guilds[guildId].Name} ({guildId}) in channel {server.ShinyStats.ChannelId}");
             // Subtract an hour to make sure it shows yesterday's date.
-            await statsChannel.SendMessageAsync(Translator.Instance.Translate("SHINY_STATS_TITLE").FormatText(DateTime.Now.Subtract(TimeSpan.FromHours(1)).ToLongDateString()));
+            await statsChannel.SendMessageAsync(Translator.Instance.Translate("SHINY_STATS_TITLE").FormatText(new { date = DateTime.Now.Subtract(TimeSpan.FromHours(1)).ToLongDateString() }));
             Thread.Sleep(500);
             await statsChannel.SendMessageAsync(Translator.Instance.Translate("SHINY_STATS_NEWLINE"));
             var stats = await ShinyStats.GetShinyStats(_whConfig.Instance.Database.Scanner.ToString());
@@ -1013,16 +1039,29 @@
                 if (pokemon == 0)
                     continue;
 
-                if (!MasterFile.Instance.Pokedex.ContainsKey((int)pokemon))
+                if (!MasterFile.Instance.Pokedex.ContainsKey(pokemon))
                     continue;
 
-                var pkmn = MasterFile.Instance.Pokedex[(int)pokemon];
+                var pkmn = MasterFile.Instance.Pokedex[pokemon];
                 var pkmnStats = stats[pokemon];
                 var chance = pkmnStats.Shiny == 0 || pkmnStats.Total == 0 ? 0 : Convert.ToInt32(pkmnStats.Total / pkmnStats.Shiny);
                 if (chance == 0)
-                    await statsChannel.SendMessageAsync(Translator.Instance.Translate("SHINY_STATS_MESSAGE").FormatText(pkmn.Name, pokemon, pkmnStats.Shiny.ToString("N0"), pkmnStats.Total.ToString("N0")));
+                    await statsChannel.SendMessageAsync(Translator.Instance.Translate("SHINY_STATS_MESSAGE").FormatText(new
+                    {
+                        pokemon = pkmn.Name,
+                        id = pokemon,
+                        shiny = pkmnStats.Shiny.ToString("N0"),
+                        total = pkmnStats.Total.ToString("N0"),
+                    }));
                 else
-                    await statsChannel.SendMessageAsync(Translator.Instance.Translate("SHINY_STATS_MESSAGE_WITH_RATIO").FormatText(pkmn.Name, pokemon, pkmnStats.Shiny.ToString("N0"), pkmnStats.Total.ToString("N0"), chance));
+                    await statsChannel.SendMessageAsync(Translator.Instance.Translate("SHINY_STATS_MESSAGE_WITH_RATIO").FormatText(new
+                    {
+                        pokemon = pkmn.Name,
+                        id = pokemon,
+                        shiny = pkmnStats.Shiny.ToString("N0"),
+                        total = pkmnStats.Total.ToString("N0"),
+                        chance = chance,
+                    }));
 
                 Thread.Sleep(500);
             }
@@ -1030,9 +1069,18 @@
             var total = stats[0];
             var totalRatio = total.Shiny == 0 || total.Total == 0 ? 0 : Convert.ToInt32(total.Total / total.Shiny);
             if (totalRatio == 0)
-                await statsChannel.SendMessageAsync(Translator.Instance.Translate("SHINY_STATS_TOTAL_MESSAGE").FormatText(total.Shiny.ToString("N0"), total.Total.ToString("N0")));
+                await statsChannel.SendMessageAsync(Translator.Instance.Translate("SHINY_STATS_TOTAL_MESSAGE").FormatText(new
+                {
+                    shiny = total.Shiny.ToString("N0"),
+                    total = total.Total.ToString("N0"),
+                }));
             else
-                await statsChannel.SendMessageAsync(Translator.Instance.Translate("SHINY_STATS_TOTAL_MESSAGE_WITH_RATIO").FormatText(total.Shiny.ToString("N0"), total.Total.ToString("N0"), totalRatio));
+                await statsChannel.SendMessageAsync(Translator.Instance.Translate("SHINY_STATS_TOTAL_MESSAGE_WITH_RATIO").FormatText(new
+                {
+                    shiny = total.Shiny.ToString("N0"),
+                    total = total.Total.ToString("N0"),
+                    chance = totalRatio,
+                }));
 
             Thread.Sleep(10 * 1000);
         }

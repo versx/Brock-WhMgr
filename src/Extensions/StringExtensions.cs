@@ -3,6 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text.RegularExpressions;
+
+    using HandlebarsDotNet;
 
     using WhMgr.Diagnostics;
 
@@ -10,34 +13,17 @@
     {
         private static readonly IEventLogger _logger = EventLogger.GetLogger("STRING_EXTENSIONS", Program.LogLevel);
 
-        public static string FormatText(this string text, params object[] args)
+        /// <summary>
+        /// Format text with provided anonymous object modal for
+        /// Handlebars.Net templating engine to parse
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static string FormatText(this string text, dynamic args)
         {
-            try
-            {
-                var msg = text;
-                for (var i = 0; i < args.Length; i++)
-                {
-                    if (string.IsNullOrEmpty(msg))
-                        continue;
-
-                    if (args == null)
-                        continue;
-
-                    if (args[i] == null)
-                    {
-                        msg = msg.Replace("{" + i + "}", null);
-                        continue;
-                    }
-
-                    msg = msg.Replace("{" + i + "}", args[i].ToString());
-                }
-                return msg;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex);
-                return string.Format(text, args);
-            }
+            var template = Handlebars.Compile(text);
+            return template(args);
         }
 
         public static IEnumerable<string> SplitInParts(this string s, int partLength)

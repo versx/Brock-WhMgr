@@ -119,5 +119,25 @@
                 return "Boolean";
             return type.Name.ToString();
         }
+
+        public static bool Intersects<T>(this List<T> list1, List<T> list2)
+        {
+            if (list1 is null)
+            {
+                throw new ArgumentNullException(nameof(list1));
+            }
+            if (list2 is null)
+            {
+                throw new ArgumentNullException(nameof(list2));
+            }
+            foreach (var item in list1)
+            {
+                if (list2.Contains(item))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

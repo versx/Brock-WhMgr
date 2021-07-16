@@ -9,11 +9,10 @@
 	[
 		{
 			"name": "City1-Rare",
-			"description": "<!@324234324> <iv> L<lvl> <geofence>",
+			"description": "<!@324234324> <@&12331131> <iv> L<lvl> <geofence>",
 			"alerts": "default.json",
 			"filters": "all.json",
 			"geofences":["City1.txt", "City2.txt"],
-			"mentions": "<!@324234324> <iv> L<lvl> <geofence>",  
 			"webhook": "<DISCORD_WEBHOOK_URL>"
 		},
 		{

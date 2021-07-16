@@ -68,7 +68,7 @@ namespace WhMgr.Configuration
         /// Gets or sets the list of Geofence files to use for the Discord server (in addition to the common ones)
         /// </summary>
         [JsonProperty("geofences")]
-        public string[] GeofenceFiles { get; set; }
+        public List<string> GeofenceFiles { get; set; }
 
         [JsonIgnore]
         public List<GeofenceItem> Geofences { get; } = new List<GeofenceItem>();
@@ -152,12 +152,6 @@ namespace WhMgr.Configuration
         public string DmAlertsFile { get; set; }
 
         /// <summary>
-        /// Gets or sets the Discord embed colors to use for each message type
-        /// </summary>
-        [JsonProperty("embedColors")]
-        public DiscordEmbedColorConfig DiscordEmbedColors { get; set; }
-
-        /// <summary>
         /// Gets or sets the direct message alerts class to use for subscriptions
         /// </summary>
         [JsonIgnore]
@@ -176,7 +170,6 @@ namespace WhMgr.Configuration
             Subscriptions = new SubscriptionsConfig();
             NestsMinimumPerHour = 1;
             DmAlertsFile = "default.json";
-            DiscordEmbedColors = new DiscordEmbedColorConfig();
 
             LoadDmAlerts();
         }

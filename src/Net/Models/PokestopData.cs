@@ -122,9 +122,9 @@
                 ThumbnailUrl = DynamicReplacementEngine.ReplaceText(alert.IconUrl, properties),
                 Description = DynamicReplacementEngine.ReplaceText(alert.Content, properties),
                 Color = useInvasion
-                    ? new DiscordColor(server.DiscordEmbedColors.Pokestops.Invasions)
+                    ? new DiscordColor(MasterFile.Instance.DiscordEmbedColors.Pokestops.Invasions)
                     : useLure
-                        ? LureType.BuildLureColor(server)
+                        ? LureType.BuildLureColor(MasterFile.Instance.DiscordEmbedColors)
                         : DiscordColor.CornflowerBlue,
                 Footer = new DiscordEmbedBuilder.EmbedFooter
                 {
@@ -160,7 +160,7 @@
             //var staticMapLocationLink = string.IsNullOrEmpty(whConfig.ShortUrlApiUrl) ? staticMapLink : NetUtil.CreateShortUrl(whConfig.ShortUrlApiUrl, staticMapLink);
             var invasion = MasterFile.Instance.GruntTypes.ContainsKey(GruntType) ? MasterFile.Instance.GruntTypes[GruntType] : null;
             var leaderString = Translator.Instance.Translate("grunt_" + Convert.ToInt32(GruntType));
-            var pokemonType = MasterFile.Instance.GruntTypes.ContainsKey(GruntType) ? Notifications.GetPokemonTypeFromString(invasion?.Type) : PokemonType.None;
+            var pokemonType = MasterFile.Instance.GruntTypes.ContainsKey(GruntType) ? GetPokemonTypeFromString(invasion?.Type) : PokemonType.None;
             var invasionTypeEmoji = pokemonType == PokemonType.None
                 ? leaderString
                 : pokemonType.GetTypeEmojiIcons();
@@ -224,5 +224,50 @@
         }
 
         #endregion
+
+        public static PokemonType GetPokemonTypeFromString(string pokemonType)
+        {
+            var type = pokemonType.ToLower();
+            if (type.Contains("bug"))
+                return PokemonType.Bug;
+            else if (type.Contains("dark"))
+                return PokemonType.Dark;
+            else if (type.Contains("dragon"))
+                return PokemonType.Dragon;
+            else if (type.Contains("electric"))
+                return PokemonType.Electric;
+            else if (type.Contains("fairy"))
+                return PokemonType.Fairy;
+            else if (type.Contains("fighting") || type.Contains("fight"))
+                return PokemonType.Fighting;
+            else if (type.Contains("fire"))
+                return PokemonType.Fire;
+            else if (type.Contains("flying") || type.Contains("fly"))
+                return PokemonType.Flying;
+            else if (type.Contains("ghost"))
+                return PokemonType.Ghost;
+            else if (type.Contains("grass"))
+                return PokemonType.Grass;
+            else if (type.Contains("ground"))
+                return PokemonType.Ground;
+            else if (type.Contains("ice"))
+                return PokemonType.Ice;
+            //else if (type.Contains("tierii") || type.Contains("none") || type.Contains("tier2") || type.Contains("t2"))
+            //    return PokemonType.None;
+            else if (type.Contains("normal"))
+                return PokemonType.Normal;
+            else if (type.Contains("poison"))
+                return PokemonType.Poison;
+            else if (type.Contains("psychic"))
+                return PokemonType.Psychic;
+            else if (type.Contains("rock"))
+                return PokemonType.Rock;
+            else if (type.Contains("steel"))
+                return PokemonType.Steel;
+            else if (type.Contains("water"))
+                return PokemonType.Water;
+            else
+                return PokemonType.None;
+        }
     }
 }

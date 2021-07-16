@@ -25,7 +25,7 @@
         public List<ulong> RoleIds { get; set; }
 
         [JsonProperty("pokemonIds")]
-        public List<int> PokemonIds { get; set; }
+        public List<uint> PokemonIds { get; set; }
 
         [JsonProperty("minIV")]
         public int MinimumIV { get; set; }
@@ -33,7 +33,7 @@
         public TwilioConfig()
         {
             UserIds = new List<ulong>();
-            PokemonIds = new List<int>
+            PokemonIds = new List<uint>
             {
                 201, // Unown
                 480, // Uxie

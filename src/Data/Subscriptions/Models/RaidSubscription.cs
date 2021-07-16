@@ -23,7 +23,7 @@
             Alias("pokemon_id"), 
             Required,
         ]
-        public int PokemonId { get; set; }
+        public uint PokemonId { get; set; }
 
         [
             JsonProperty("form"),

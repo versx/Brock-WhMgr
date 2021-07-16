@@ -1,6 +1,9 @@
 # Filters
 Filters allow you to narrow down what is reported. All filters are optional and can be omitted. Plenty of examples in the repository under the [`examples/Filters`](https://github.com/versx/WhMgr/tree/master/examples/filters) directory for all different needs.  
 
+## Converters  
+- WDR [Filter Converter](https://github.com/versx/WdrFilterConverter)
+
 ## Available Filter Options
 ```js
 {

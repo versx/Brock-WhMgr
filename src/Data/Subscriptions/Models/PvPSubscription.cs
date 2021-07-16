@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     using Newtonsoft.Json;
     using ServiceStack.DataAnnotations;
@@ -14,41 +15,70 @@
     {
         [
             Alias("subscription_id"),
-            ForeignKey(typeof(SubscriptionObject))
+            ForeignKey(typeof(SubscriptionObject)),
         ]
         public int SubscriptionId { get; set; }
 
         [
+            JsonIgnore,
+            Ignore,
+        ]
+        public List<uint> PokemonId
+        {
+            get
+            {
+                try
+                {
+                    return PokemonIdString?.Split(',')?
+                                           .Select(x => uint.Parse(x))
+                                           .ToList();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[Error] Failed to parse pokemon id string: {ex}");
+                }
+                return new List<uint>();
+            }
+        }
+
+        [
             JsonProperty("pokemon_id"),
             Alias("pokemon_id"),
-            Required
+            Required,
         ]
-        public int PokemonId { get; set; }
+        public string PokemonIdString { get; set; }
+
+        [
+            JsonIgnore,
+            Ignore,
+        ]
+        public List<string> Forms => FormsString?.Split(',').ToList();
 
         [
             JsonProperty("form"),
-            Alias("form")
+            Alias("form"),
+            Default(null),
         ]
-        public string Form { get; set; }
+        public string FormsString { get; set; }
 
         [
             JsonProperty("league"),
             Alias("league"),
-            Required
+            Required,
         ]
         public PvPLeague League { get; set; }
 
         [
             JsonProperty("min_rank"),
             Alias("min_rank"),
-            Default(25)
+            Default(25),
         ]
         public int MinimumRank { get; set; }
 
         [
             JsonProperty("min_percent"),
             Alias("min_percent"),
-            Default(90.0)
+            Default(90.0),
         ]
         public double MinimumPercent { get; set; }
 
@@ -66,7 +96,6 @@
 
         public PvPSubscription()
         {
-            Form = null;
             League = PvPLeague.Great;
             MinimumRank = 25;
             MinimumPercent = 90;

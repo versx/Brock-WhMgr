@@ -75,12 +75,12 @@
             [Description("Comma separated list of event Pokemon")] string eventPokemonIds = "0")
         {
             var eventPokemonSplit = eventPokemonIds.Split(',');
-            var pkmnToAdd = new List<int>();
+            var pkmnToAdd = new List<uint>();
             var pkmnFailed = new List<string>();
             for (var i = 0; i < eventPokemonSplit.Length; i++)
             {
                 var eventPokemonId = eventPokemonSplit[i];
-                if (int.TryParse(eventPokemonId, out var pokemonId) && (pokemonId == 0 || MasterFile.Instance.Pokedex.ContainsKey(pokemonId)))
+                if (uint.TryParse(eventPokemonId, out var pokemonId) && (pokemonId == 0 || MasterFile.Instance.Pokedex.ContainsKey(pokemonId)))
                 {
                     pkmnToAdd.Add(pokemonId);
                     continue;
@@ -102,10 +102,18 @@
                 }
             }
 
-            var message = Translator.Instance.Translate("EVENT_POKEMON_SET").FormatText(ctx.User.Username, string.Join(", ", pkmnNames));
+            var message = Translator.Instance.Translate("EVENT_POKEMON_SET").FormatText(new
+            {
+                author = ctx.User.Username,
+                pokemon = string.Join(", ", pkmnNames),
+            });
             if (pkmnFailed.Count > 0)
             {
-                message += "\r\n" + Translator.Instance.Translate("NOTIFY_INVALID_POKEMON_IDS_OR_NAMES").FormatText(ctx.User.Username, string.Join(", ", pkmnFailed));
+                message += "\r\n" + Translator.Instance.Translate("NOTIFY_INVALID_POKEMON_IDS_OR_NAMES").FormatText(new
+                {
+                    author = ctx.User.Username,
+                    pokemon = string.Join(", ", pkmnFailed),
+                });
             }
             await ctx.RespondEmbed(message);
         }
@@ -119,12 +127,12 @@
             [Description("Comma separated list of event Pokemon")] string eventPokemonIds)
         {
             var eventPokemonSplit = eventPokemonIds.Split(',');
-            var pkmnToAdd = new List<int>();
+            var pkmnToAdd = new List<uint>();
             var pkmnFailed = new List<string>();
             for (var i = 0; i < eventPokemonSplit.Length; i++)
             {
                 var eventPokemonId = eventPokemonSplit[i];
-                if (int.TryParse(eventPokemonId, out var pokemonId) && (pokemonId == 0 || MasterFile.Instance.Pokedex.ContainsKey(pokemonId)))
+                if (uint.TryParse(eventPokemonId, out var pokemonId) && (pokemonId == 0 || MasterFile.Instance.Pokedex.ContainsKey(pokemonId)))
                 {
                     pkmnToAdd.Add(pokemonId);
                     continue;
@@ -146,10 +154,18 @@
                 }
             }
 
-            var message = Translator.Instance.Translate("EVENT_POKEMON_SET").FormatText(ctx.User.Username, string.Join(", ", pkmnNames));
+            var message = Translator.Instance.Translate("EVENT_POKEMON_ADD").FormatText(new
+            {
+                author = ctx.User.Username,
+                pokemon = string.Join(", ", pkmnNames)
+            });
             if (pkmnFailed.Count > 0)
             {
-                message += "\r\n" + Translator.Instance.Translate("NOTIFY_INVALID_POKEMON_IDS_OR_NAMES").FormatText(ctx.User.Username, string.Join(", ", pkmnFailed));
+                message += "\r\n" + Translator.Instance.Translate("NOTIFY_INVALID_POKEMON_IDS_OR_NAMES").FormatText(new
+                {
+                    author = ctx.User.Username,
+                    pokemon = string.Join(", ", pkmnFailed),
+                });
             }
             await ctx.RespondEmbed(message);
         }
@@ -163,12 +179,12 @@
             [Description("Command separated list of event Pokemon")] string eventPokemonIds)
         {
             var eventPokemonSplit = eventPokemonIds.Split(',');
-            var pkmnToRemove = new List<int>();
+            var pkmnToRemove = new List<uint>();
             var pkmnFailed = new List<string>();
             for (var i = 0; i < eventPokemonSplit.Length; i++)
             {
                 var eventPokemonId = eventPokemonSplit[i];
-                if (int.TryParse(eventPokemonId, out var pokemonId) && (pokemonId == 0 || MasterFile.Instance.Pokedex.ContainsKey(pokemonId)))
+                if (uint.TryParse(eventPokemonId, out var pokemonId) && (pokemonId == 0 || MasterFile.Instance.Pokedex.ContainsKey(pokemonId)))
                 {
                     pkmnToRemove.Add(pokemonId);
                     continue;
@@ -190,10 +206,18 @@
                 }
             }
 
-            var message = Translator.Instance.Translate("EVENT_POKEMON_REMOVE").FormatText(ctx.User.Username, string.Join(", ", pkmnNames));
+            var message = Translator.Instance.Translate("EVENT_POKEMON_REMOVE").FormatText(new
+            {
+                author = ctx.User.Username,
+                pokemon = string.Join(", ", pkmnNames),
+            });
             if (pkmnFailed.Count > 0)
             {
-                message += "\r\n" + Translator.Instance.Translate("NOTIFY_INVALID_POKEMON_IDS_OR_NAMES").FormatText(ctx.User.Username, string.Join(", ", pkmnFailed));
+                message += "\r\n" + Translator.Instance.Translate("NOTIFY_INVALID_POKEMON_IDS_OR_NAMES").FormatText(new
+                {
+                    author = ctx.User.Username,
+                    pokemon = string.Join(", ", pkmnFailed),
+                });
             }
             await ctx.RespondEmbed(message);
         }

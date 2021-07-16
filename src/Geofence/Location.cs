@@ -1,6 +1,7 @@
 ﻿namespace WhMgr.Geofence
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Net;
@@ -102,12 +103,17 @@
         public string CountryCode { get; set; }
     }
 
+    public class LocationCache : Dictionary<(double, double), Location>
+    {
+    }
+
     /// <summary>
     /// Geocoordinate location
     /// </summary>
     public class Location
     {
         private static readonly IEventLogger _logger = EventLogger.GetLogger("LOCATION", Program.LogLevel);
+        private static readonly LocationCache _cache = new LocationCache();
 
         /// <summary>
         /// Gets or sets the address for the location
@@ -162,13 +168,31 @@
         /// <returns>Returns a <seealso cref="Location"/> object containing the address</returns>
         public Location GetAddress(WhConfig config)
         {
+            var key = (Latitude, Longitude);
+            // Check if cache already contains lat/lon tuple key, if so return it.
+            if (_cache.ContainsKey(key))
+            {
+                return _cache[key];
+            }
+
+            // Check if we want any reverse geocoding address
+            Location location = null;
             if (!string.IsNullOrEmpty(config.GoogleMapsKey))
-                return GetGoogleAddress(City, Latitude, Longitude, config.GoogleMapsKey);
+            {
+                location = GetGoogleAddress(City, Latitude, Longitude, config.GoogleMapsKey);
+            }
 
             if (!string.IsNullOrEmpty(config.NominatimEndpoint))
-                return GetNominatimAddress(City, Latitude, Longitude, config.NominatimEndpoint, config.NominatimSchema);
+            {
+                location = GetNominatimAddress(City, Latitude, Longitude, config.NominatimEndpoint, config.NominatimSchema);
+            }
 
-            return null;
+            // Check if lat/lon tuple key has not been cached already, if not add it.
+            if (!_cache.ContainsKey(key))
+            {
+                _cache.Add(key, location);
+            }
+            return location;
         }
 
         /// <summary>

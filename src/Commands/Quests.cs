@@ -71,7 +71,11 @@
 
                 messages = await channel.GetMessagesAsync();
             }
-            await ctx.RespondEmbed(Translator.Instance.Translate("CHANNEL_MESSAGES_DELETED").FormatText(ctx.User.Username, channel.Mention));
+            await ctx.RespondEmbed(Translator.Instance.Translate("CHANNEL_MESSAGES_DELETED").FormatText(new
+            {
+                author = ctx.User.Username,
+                channel = channel.Mention,
+            }));
         }
     }
 }

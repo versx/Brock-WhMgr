@@ -35,7 +35,7 @@
         /// </summary>
         //TODO: Allow pokemon names and ids for raid filter.
         [JsonProperty("pokemon")]
-        public List<int> Pokemon { get; set; }
+        public List<uint> Pokemon { get; set; }
 
         /// <summary>
         /// Gets or sets the list of Raid Boss Pokemon Form strings to filter against
@@ -78,7 +78,7 @@
         /// </summary>
         public FilterRaidObject()
         {
-            Pokemon = new List<int>();
+            Pokemon = new List<uint>();
             Forms = new List<string>();
             Costumes = new List<string>();
             MinimumLevel = 1;

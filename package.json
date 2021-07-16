@@ -1,0 +1,24 @@
+{
+  "name": "whmgr",
+  "version": "1.0.0",
+  "directories": {
+    "doc": "docs",
+    "example": "examples",
+    "test": "test"
+  },
+  "scripts": {
+    "create-locales": "node create-locales.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/versx/WhMgr.git"
+  },
+  "author": "versx",
+  "bugs": {
+    "url": "https://github.com/versx/WhMgr/issues"
+  },
+  "homepage": "https://github.com/versx/WhMgr",
+  "dependencies": {
+    "pogo-translations": "git+https://github.com/bschultz/pogo-translations.git"
+  }
+}

@@ -17,7 +17,7 @@
         public int Count { get; set; }
 
         [Alias("pokemon_id")]
-        public int PokemonId { get; set; }
+        public uint PokemonId { get; set; }
 
         [Alias("lat")]
         public double Latitude { get; set; }

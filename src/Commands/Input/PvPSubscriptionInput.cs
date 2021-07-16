@@ -35,7 +35,11 @@
 
             if (pvpLeague == PvPLeague.Other)
             {
-                await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_PVP_LEAGUE").FormatText(_context.User.Username, league), DiscordColor.Red);
+                await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_PVP_LEAGUE").FormatText(new
+                {
+                    author = _context.User.Username,
+                    league = league,
+                }), DiscordColor.Red);
                 return PvPLeague.Other;
             }
 
@@ -56,7 +60,11 @@
             //You may only subscribe to the top 100 or higher rank.
             if (minimumRank < Strings.MinimumRank || minimumRank > Strings.MaximumRank)
             {
-                await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_PVP_RANK_RANGE").FormatText(_context.User.Username, minRank), DiscordColor.Red);
+                await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_PVP_RANK_RANGE").FormatText(new
+                {
+                    author = _context.User.Username,
+                    rank = minRank,
+                }), DiscordColor.Red);
                 return 3;
             }
             return minimumRank;
@@ -73,7 +81,11 @@
 
             if (minimumPercent < Strings.MinimumPercent || minimumPercent > Strings.MaximumPercent)
             {
-                await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_PVP_PERCENT_RANGE").FormatText(_context.User.Username, minimumPercent), DiscordColor.Red);
+                await _context.RespondEmbed(Translator.Instance.Translate("NOTIFY_INVALID_PVP_PERCENT_RANGE").FormatText(new
+                {
+                    author = _context.User.Username,
+                    percent = minimumPercent,
+                }), DiscordColor.Red);
                 return 98;
             }
             return minimumPercent;

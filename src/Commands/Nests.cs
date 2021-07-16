@@ -55,7 +55,7 @@
             var channel = await ctx.Client.GetChannelAsync(channelId);
             if (channel == null)
             {
-                await ctx.RespondEmbed(Translator.Instance.Translate("ERROR_NESTS_DISABLED").FormatText(ctx.User.Username), DiscordColor.Red);
+                await ctx.RespondEmbed(Translator.Instance.Translate("ERROR_NESTS_DISABLED").FormatText(new { author = ctx.User.Username }), DiscordColor.Red);
                 return;
             }
 
@@ -68,7 +68,7 @@
             var nests = GetNests(_dep.WhConfig.Database.Nests.ToString());
             if (nests == null)
             {
-                await ctx.RespondEmbed(Translator.Instance.Translate("ERROR_NESTS_LIST").FormatText(ctx.User.Username));
+                await ctx.RespondEmbed(Translator.Instance.Translate("ERROR_NESTS_LIST").FormatText(new { author = ctx.User.Username }));
                 return;
             }
 

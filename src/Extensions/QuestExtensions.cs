@@ -24,7 +24,10 @@
 
         public static string GetQuestMessage(this QuestType type, int target)
         {
-            return Translator.Instance.Translate("quest_" + Convert.ToInt32(type), target);
+            return Translator.Instance.Translate("quest_" + Convert.ToInt32(type)).FormatText(new
+            {
+                amount = target,
+            });
         }
 
         public static string GetConditions(this QuestData quest)
@@ -60,26 +63,66 @@
         public static string GetCondition(this QuestConditionMessage condition)
         {
             var conditionKey = "quest_condition_" + Convert.ToInt32(condition.Type);
+            var formattedSuffix = "_formatted";
             switch (condition.Type)
             {
                 case QuestConditionType.WithPokemonCategory:
-                    return string.Join(", ", condition.Info.PokemonIds?.Select(x => Translator.Instance.GetPokemonName(x)).ToList());
+                    return Translator.Instance.Translate(conditionKey + formattedSuffix).FormatText(new
+                    {
+                        pokemon = string.Join(", ", condition.Info.PokemonIds?.Select(x =>
+                            Translator.Instance.GetPokemonName(x)).ToList()
+                        ),
+                    });
                 case QuestConditionType.WithPokemonType:
-                    return string.Join(", ", condition.Info.PokemonTypeIds?.Select(x => Convert.ToString((PokemonType)x))) + "-type";
-                case QuestConditionType.WithQuestContext:
-                    break;
+                    return Translator.Instance.Translate(conditionKey + formattedSuffix).FormatText(new
+                    {
+                        types = string.Join(", ", condition.Info.PokemonTypeIds?.Select(x =>
+                            Convert.ToString((PokemonType)x))) + "-type",
+                    });
                 case QuestConditionType.WithRaidLevel:
-                    return Translator.Instance.Translate(conditionKey, string.Join(", ", condition.Info.RaidLevels));
-                case QuestConditionType.WithSuperEffectiveCharge:
+                    return Translator.Instance.Translate(conditionKey + formattedSuffix).FormatText(new
+                    {
+                        levels = string.Join(", ", condition.Info.RaidLevels),
+                    });
                 case QuestConditionType.WithThrowType:
-                    return Translator.Instance.GetThrowName(condition.Info.ThrowTypeId);
+                    return Translator.Instance.Translate(conditionKey + formattedSuffix).FormatText(new
+                    {
+                        throw_type = Translator.Instance.GetThrowName(condition.Info.ThrowTypeId),
+                    });
                 case QuestConditionType.WithThrowTypeInARow:
-                    return Translator.Instance.Translate(conditionKey, Translator.Instance.GetThrowName(condition.Info.ThrowTypeId));
+                    return Translator.Instance.Translate(conditionKey + formattedSuffix).FormatText(new
+                    {
+                        throw_type = Translator.Instance.GetThrowName(condition.Info.ThrowTypeId),
+                    });
+                case QuestConditionType.WithPokemonAlignment:
+                    return Translator.Instance.Translate(conditionKey + formattedSuffix).FormatText(new
+                    {
+                        alignments = string.Join(", ", condition.Info.AlignmentIds?.Select(x =>
+                            Translator.Instance.GetAlignmentName((AlignmentId)x))
+                        ),
+                    });
+                case QuestConditionType.WithInvasionCharacter:
+                    return Translator.Instance.Translate(conditionKey + formattedSuffix).FormatText(new
+                    {
+                        categories = string.Join(", ", condition.Info.CharacterCategoryIds?.Select(x =>
+                            Translator.Instance.GetCharacterCategoryName((CharacterCategory)x))
+                        ),
+                    });
+                case QuestConditionType.WithTempEvoPokemon: // Mega evo
+                    return Translator.Instance.Translate(conditionKey + formattedSuffix).FormatText(new
+                    {
+                        pokemon = string.Join(", ", condition.Info.RaidPokemonEvolutions?.Select(x =>
+                            Translator.Instance.GetEvolutionName((TemporaryEvolutionId)x))
+                        ),
+                    });
+
                 case QuestConditionType.WithBadgeType:
                 case QuestConditionType.WithCurveBall:
                 case QuestConditionType.WithDailyCaptureBonus:
                 case QuestConditionType.WithDailySpinBonus:
                 case QuestConditionType.WithDaysInARow:
+                case QuestConditionType.WithSuperEffectiveCharge:
+                case QuestConditionType.WithQuestContext:
                 case QuestConditionType.WithItem:
                 case QuestConditionType.WithNewFriend:
                 case QuestConditionType.WithPlayerLevel:
@@ -96,15 +139,7 @@
                 case QuestConditionType.WithBuddy:
                 default:
                     return Translator.Instance.Translate(conditionKey);
-                case QuestConditionType.WithPokemonAlignment:
-                    return string.Join(", ", condition.Info.AlignmentIds?.Select(x => Translator.Instance.GetAlignmentName((AlignmentId)x)));
-                case QuestConditionType.WithInvasionCharacter:
-                    return string.Join(", ", condition.Info.CharacterCategoryIds?.Select(x => Translator.Instance.GetCharacterCategoryName((CharacterCategory)x)));
-                case QuestConditionType.WithTempEvoPokemon: // Mega evo
-                    return string.Join(", ", condition.Info.RaidPokemonEvolutions?.Select(x => Translator.Instance.GetEvolutionName((TemporaryEvolutionId)x)));
             }
-
-            return null;
         }
 
         public static string GetReward(this QuestData quest)
@@ -125,32 +160,52 @@
         public static string GetReward(this QuestRewardType type, QuestReward info)
         {
             var rewardKey = "quest_reward_" + Convert.ToInt32(type);
+            var formattedSuffix = "_formatted";
             switch (type)
             {
                 case QuestRewardType.AvatarClothing:
                 case QuestRewardType.Quest:
                     return Translator.Instance.Translate(rewardKey);
+
                 case QuestRewardType.Candy:
-                    return Translator.Instance.Translate(rewardKey, info.Amount);
-                case QuestRewardType.Experience:
-                    return Translator.Instance.Translate(rewardKey, info.Amount);
-                case QuestRewardType.Item:
-                    var itemName = Translator.Instance.GetItem(info.Item);
-                    return Translator.Instance.Translate(rewardKey, info.Amount, itemName);
-                case QuestRewardType.PokemonEncounter:
-                    var formName = info.FormId > 0 ? Translator.Instance.GetFormName(info.FormId) : null;
-                    var pkmnName = (info.Shiny ? $"**SHINY** " : "") + Translator.Instance.GetPokemonName(info.Ditto ? 132 : info.PokemonId);
-                    return $"{pkmnName} {formName}";
-                case QuestRewardType.Stardust:
-                    return Translator.Instance.Translate(rewardKey, info.Amount);
                 case QuestRewardType.MegaResource:
-                    return Translator.Instance.Translate(rewardKey, info.PokemonId, info.Amount);
-                case QuestRewardType.XlCandy: // TODO: By PokemonId?
-                    return Translator.Instance.Translate(rewardKey, info.Amount);
-                case QuestRewardType.Sticker:
-                    return Translator.Instance.Translate(rewardKey, info.StickerId, info.Amount);
+                case QuestRewardType.XlCandy:
+                    return Translator.Instance.Translate(rewardKey + formattedSuffix, new
+                    {
+                        amount = info.Amount.ToString(),
+                        pokemon = Translator.Instance.GetPokemonName(info.Ditto ? 132 : info.PokemonId),
+                    });
+                
+                case QuestRewardType.Experience:
                 case QuestRewardType.Pokecoin:
-                    return Translator.Instance.Translate(rewardKey, info.Amount);
+                case QuestRewardType.Stardust:
+                    return Translator.Instance.Translate(rewardKey + formattedSuffix).FormatText(new
+                    {
+                        amount = info.Amount.ToString(),
+                    });
+
+                case QuestRewardType.Item:
+                    return Translator.Instance.Translate(rewardKey + formattedSuffix).FormatText(new
+                    {
+                        amount = info.Amount.ToString(),
+                        item = Translator.Instance.GetItem(info.Item),
+                    });
+
+                case QuestRewardType.PokemonEncounter:
+                    return Translator.Instance.Translate(rewardKey + formattedSuffix).FormatText(new
+                    {
+                        pokemon = (info.Shiny ? $"**SHINY** " : "") + Translator.Instance.GetPokemonName(info.Ditto ? 132 : info.PokemonId),
+                        form = info.FormId > 0 ? Translator.Instance.GetFormName(info.FormId) : null,
+                    });
+
+                case QuestRewardType.Sticker:
+                    //return Translator.Instance.Translate(rewardKey, info.StickerId, info.Amount);
+                    return Translator.Instance.Translate(rewardKey + formattedSuffix, new
+                    {
+                        sticker = info.StickerId,
+                        amount = info.Amount.ToString(),
+                    });
+
                 case QuestRewardType.LevelCap:
                     return type.ToString();
             }

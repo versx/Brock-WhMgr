@@ -1,0 +1,43 @@
+{
+  "pokemon": {
+    "iv": [
+      { "min": 0, "max": 0, "color": "#ffffff" },
+      { "min": 1, "max": 89, "color": "#ffff00" },
+      { "min": 90, "max": 99, "color": "#ffa500" },
+      { "min": 100, "max": 100, "color": "#00ff00" }
+    ],
+    "pvp": [
+      { "min": 1, "max": 1, "color": "#000080" },
+      { "min": 2, "max": 3, "color": "#800080" },
+      { "min": 4, "max": 100, "color": "#aa2299" }
+    ]
+  },
+  "raids": {
+    "1": "#ff69b4",
+    "2": "#ff69b4",
+    "3": "#ffff00",
+    "4": "#ffff00",
+    "5": "#800080",
+    "6": "#a52a2a",
+    "ex": "#2c2f33"
+  },
+  "pokestops": {
+    "quests": "#ffa500",
+    "lures": {
+      "normal": "#ff69b4",
+      "glacial": "#6495ed",
+      "mossy": "#507d2a",
+      "magnetic": "#808080"
+    },
+    "invasions": "#ff0000"
+  },
+  "weather": {
+    "clear": "#ffff00",
+    "cloudy": "#99aab5",
+    "fog": "#9a9a9a",
+    "partlyCloudy": "#808080",
+    "rain": "#0000ff",
+    "snow": "#ffffff",
+    "windy": "#800080"
+  }
+}

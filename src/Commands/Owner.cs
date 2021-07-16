@@ -86,7 +86,11 @@
                 }
             }
 
-            await ctx.RespondEmbed(Translator.Instance.Translate("REMOVED_TOTAL_DEPARTED_MEMBERS").FormatText(removed.ToString("N0"), users.Count.ToString("N0")));
+            await ctx.RespondEmbed(Translator.Instance.Translate("REMOVED_TOTAL_DEPARTED_MEMBERS").FormatText(new
+            {
+                removed = removed.ToString("N0"),
+                users = users.Count.ToString("N0"),
+            }));
         }
 
         [

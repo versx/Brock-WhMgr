@@ -23,7 +23,7 @@
         /// </summary>
         //TODO: Allow pokemon names and ids for pokemon filter.
         [JsonProperty("pokemon")]
-        public List<int> Pokemon { get; set; }
+        public List<uint> Pokemon { get; set; }
 
         /// <summary>
         /// Gets or sets the list of pokemon Form strings to filter against
@@ -134,7 +134,7 @@
         /// </summary>
         public FilterPokemonObject()
         {
-            Pokemon = new List<int>();
+            Pokemon = new List<uint>();
             Forms = new List<string>();
             Costumes = new List<string>();
             MinimumIV = 0;

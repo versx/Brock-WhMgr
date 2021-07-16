@@ -9,7 +9,7 @@
     public class PokedexPokemon
     {
         [JsonProperty("pokedex_id")]
-        public int PokedexId { get; set; }
+        public uint PokedexId { get; set; }
 
         [JsonProperty("name")]
         public string Name { get; set; }

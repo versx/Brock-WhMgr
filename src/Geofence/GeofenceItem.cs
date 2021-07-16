@@ -1,15 +1,16 @@
-﻿using NetTopologySuite.Features;
-using NetTopologySuite.Geometries;
-using NetTopologySuite.IO;
-using Newtonsoft.Json;
-using WhMgr.Utilities;
-
-namespace WhMgr.Geofence
+﻿namespace WhMgr.Geofence
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.IO;
+
+    using NetTopologySuite.Features;
+    using NetTopologySuite.Geometries;
+    using NetTopologySuite.IO;
+    using Newtonsoft.Json;
+
+    using WhMgr.Utilities;
 
     /// <summary>
     /// Geofence class

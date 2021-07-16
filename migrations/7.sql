@@ -49,4 +49,4 @@ ALTER TABLE `subscriptions`
 DROP COLUMN `enabled`;
 
 ALTER TABLE `subscriptions`
-ADD COLUMN `status` smallint(5) unsigned DEFAULT 0;
+ADD COLUMN `status` smallint(5) unsigned DEFAULT 127;
